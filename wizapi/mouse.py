@@ -1,5 +1,6 @@
-import win32api, ctypes
-import ctypes.wintypes
+import ctypes
+from ctypes.wintypes import POINT
+import asyncio
 
 # If the mouse is over a coordinate in FAILSAFE_POINTS and FAILSAFE is True, the FailSafeException is raised.
 # The rest of the points are added to the FAILSAFE_POINTS list at the bottom of this file, after size() has been defined.
@@ -76,7 +77,7 @@ class Mouse:
         y = y if (y != -1) else old_pos[1]
         self._do_event(self.MOUSEEVENTF_MOVE + self.MOUSEEVENTF_ABSOLUTE, x, y, 0, 0)
 
-    def move_to(self, x, y, duration=0):
+    async def move_to(self, x, y, duration=0):
         # We need to get from (startx, starty) to (x, y)
         startx, starty = self.get_position()
         x_offset = x - startx
@@ -101,7 +102,7 @@ class Mouse:
         for _x, _y in steps:
             if len(steps) > 1:
                 # A single step doesn't require tweening
-                time.sleep(sleep_amount)
+                await time.sleep(sleep_amount)
 
             _x = int(round(_x))
             _y = int(round(_y))
@@ -116,19 +117,19 @@ class Mouse:
         if (_x, _y) not in FAILSAFE_POINTS:
             self.failSafeCheck()
 
-    def press_button(self, pos=(-1, -1), button="left", button_up=False):
+    async def press_button(self, pos=(-1, -1), button="left", button_up=False):
         """push a button of the mouse"""
-        self.move_mouse(pos)
+        await self.move_mouse(pos)
         self._do_event(self.get_button_value(button, button_up), 0, 0, 0, 0)
 
-    def click(self, pos=(-1, -1), button="left"):
+    async def click(self, pos=(-1, -1), button="left"):
         """Click at the specified placed"""
         (x, y) = pos
         # If position is not set, use current mouse position
         old_pos = self.get_position()
         x = x if (x != -1) else old_pos[0]
         y = y if (y != -1) else old_pos[1]
-        self.move_mouse(x, y)
+        await self.move_mouse(x, y)
         self._do_event(
             self._get_button_value(button, False)
             + self._get_button_value(button, True),
@@ -138,14 +139,14 @@ class Mouse:
             0,
         )
 
-    def double_click(self, pos=(-1, -1), button="left"):
+    async def double_click(self, pos=(-1, -1), button="left"):
         """Double click at the specifed placed"""
         for i in xrange(2):
-            self.click(pos, button)
+            await self.click(pos, button)
 
     def get_position(self):
         """get mouse position"""
-        point = ctypes.wintypes.POINT()
+        point = POINT()
         ctypes.windll.user32.GetCursorPos(ctypes.byref(point))
         return (point.x, point.y)
 

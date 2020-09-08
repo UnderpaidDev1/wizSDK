@@ -211,7 +211,7 @@ description = "Automation bot for wizard101"
 name = "wizwalker"
 optional = false
 python-versions = ">=3.8,<4.0"
-version = "0.12.2"
+version = "0.12.3"
 
 [package.dependencies]
 aioconsole = ">=0.2.1,<0.3.0"
@@ -350,6 +350,6 @@ win32-setctime = [
     {file = "win32_setctime-1.0.2.tar.gz", hash = "sha256:47aa7c43548c1fc0a4f026d1944b748b37036df116c7c4cf908e82638d854313"},
 ]
 wizwalker = [
-    {file = "wizwalker-0.12.2-py3-none-any.whl", hash = "sha256:520a94a70399ea5993dbdbc14b54151ec3fcc7af024d41d96960463013a440e7"},
-    {file = "wizwalker-0.12.2.tar.gz", hash = "sha256:c00ea679cd4c65abd39ce105235ca23987e78841f79efff4a20d123030ab8818"},
+    {file = "wizwalker-0.12.3-py3-none-any.whl", hash = "sha256:152edc6f0ad7b496481cf4b4c6431879fb9ef0c1b582b913a8a982e9838f4cab"},
+    {file = "wizwalker-0.12.3.tar.gz", hash = "sha256:2efd083adde1e206f8acecbeb47b536ee72828e317aa6c67f1c9a0b4974d119c"},
 ]

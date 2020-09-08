@@ -83,18 +83,19 @@ class Client(DeviceContext, Keyboard):
             user32.SetForegroundWindow(self.window_handle)
         return self
 
-    def move_mouse(self, x, y, speed=0.5):
+    async def move_mouse(self, x, y, speed=0.5):
         """ Moves to mouse to the position (x, y) relative to the window's position """
         wx, wy = self.get_rect()[:2]
-        mouse.move_to(wx + x, wy + y, duration=speed)
+        await mouse.move_to(wx + x, wy + y, duration=speed)
         return self
 
     async def click(self, x, y, delay=0.1, speed=0.5, button="left"):
         """ Moves the mouse to (x, y) relative to the window and presses the mouse button """
-        self.set_active().move_mouse(x, y, speed=speed)
+        self.set_active()
+        await self.move_mouse(x, y, speed=speed)
         await self.wait(delay)
 
-        mouse.click(button=button)
+        await mouse.click(button=button)
         return self
 
     def is_health_low(self):
@@ -168,7 +169,8 @@ class Client(DeviceContext, Keyboard):
             await self.click(160, 590, delay=0.2)
 
     async def pass_turn(self):
-        await self.click(254, 398, delay=0.5).move_mouse(200, 400)
+        await self.click(254, 398, delay=0.5)
+        await self.move_mouse(200, 400)
         return self
 
     def is_turn_to_play(self):
