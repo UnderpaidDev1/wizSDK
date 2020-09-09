@@ -2,6 +2,7 @@ import ctypes
 import ctypes.wintypes
 import numpy as np
 import cv2
+from .window import Window
 
 user32 = ctypes.WinDLL("user32.dll")
 gdi32 = ctypes.WinDLL("gdi32.dll")
@@ -38,15 +39,10 @@ class BITMAP(ctypes.Structure):
     ]
 
 
-class DeviceContext:
+class DeviceContext(Window):
     def __init__(self, handle):
+        super().__init__(handle)
         self.window_handle = handle
-
-    def get_rect(self):
-        rect = ctypes.wintypes.RECT()
-        user32.GetWindowRect(self.window_handle, ctypes.byref(rect))
-        # Returns (x, y, w, h) tuple
-        return (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top)
 
     def get_image(self, region=None):
         _, _, w, h = self.get_rect()
@@ -149,21 +145,24 @@ class DeviceContext:
 def to_cv2_img(data):
     if type(data) is str:
         # It's a file name
-        return cv2.imread(data)
+        img = cv2.imread(data)
+        if img is None:
+            print(f'Unable to find `{data}`')
+        return img
 
-    elif type(data) is numpy.ndarray:
+    elif type(data) is np.ndarray:
         # It's a np array
-        # return cv2.imdecode(data, cv2.IMREAD_COLOR)
         return data
 
     return None
 
 
 def match_image(largeImg, smallImg, threshold=0.1, debug=False):
-
-    """ Finds smallImg in largeImg using template matching """
-    """ Adjust threshold for the precision of the match (between 0 and 1, the lowest being more precise """
-    """ Returns false if no match was found with the given threshold """
+    """ 
+    Finds smallImg in largeImg using template matching 
+    Adjust threshold for the precision of the match (between 0 and 1, the lowest being more precise)
+    Returns false if no match was found with the given threshold
+    """
 
     method = cv2.TM_SQDIFF_NORMED
 
@@ -171,6 +170,7 @@ def match_image(largeImg, smallImg, threshold=0.1, debug=False):
     large_image = to_cv2_img(largeImg)
 
     if (small_image is None) or (large_image is None):
+        print('Error: large_image or small_image is None')
         return False
 
     w, h = small_image.shape[:-1]
@@ -191,6 +191,8 @@ def match_image(largeImg, smallImg, threshold=0.1, debug=False):
         # Get the size of the template. This is the same size as the match.
         trows, tcols = small_image.shape[:2]
 
+        # If I don't call this a get a TypeError :P
+        large_image = np.array(large_image) 
         # Draw the rectangle on large_image
         cv2.rectangle(large_image, (x, y), (x + tcols, y + trows), (0, 0, 255), 2)
 

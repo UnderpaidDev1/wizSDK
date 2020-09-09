@@ -1,0 +1,16 @@
+Metadata-Version: 1.2
+Name: wizsdk
+Version: 0.1.4
+Summary: API for interacting with and making bots for wizard101
+Home-page: UNKNOWN
+Author: Underpaid Dev
+Author-email: underpaiddev1@gmail.com
+License: UNKNOWN
+Description: # WizAPI botting tool
+        
+        ### Create powerful bots for Wizard101
+        
+        A wrapper for [WizWalker](https://pypi.org/project/wizwalker/) to create the bots _you_ want, right now.
+        
+Platform: UNKNOWN
+Requires-Python: >=3.8,<4.0

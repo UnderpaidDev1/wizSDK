@@ -1,3 +1,6 @@
 .vscode/
 dist
 wizapi.egg-info
+venv
+test
+pyvenv.cfg

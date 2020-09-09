@@ -1,6 +1,7 @@
 import ctypes
 from ctypes.wintypes import POINT
 import asyncio
+from .window import Window, screen_size
 
 # If the mouse is over a coordinate in FAILSAFE_POINTS and FAILSAFE is True, the FailSafeException is raised.
 # The rest of the points are added to the FAILSAFE_POINTS list at the bottom of this file, after size() has been defined.
@@ -31,7 +32,7 @@ def getPointOnLine(x1, y1, x2, y2, n):
     return (x, y)
 
 
-class Mouse:
+class Mouse(Window):
     """It simulates the mouse"""
 
     MOUSEEVENTF_MOVE = 0x0001  # mouse move
@@ -45,6 +46,11 @@ class Mouse:
     MOUSEEVENTF_ABSOLUTE = 0x8000  # absolute move
     SM_CXSCREEN = 0
     SM_CYSCREEN = 1
+
+    def __init__(self, window_handle=None):
+        super().__init__(window_handle)
+        # Window handle to which the mouse events will be relative to
+        self.window_handle = window_handle
 
     def _do_event(self, flags, x_pos, y_pos, data, extra_info):
         """generate a mouse event"""
@@ -70,23 +76,36 @@ class Mouse:
         return buttons
 
     def _set_position(self, pos):
-        """move the mouse to the specified coordinates"""
+        """
+        Set the position of the mouse to the specified coordinates
+        relative to the window
+        """
         (x, y) = pos
+
         old_pos = self.get_position()
         x = x if (x != -1) else old_pos[0]
         y = y if (y != -1) else old_pos[1]
         self._do_event(self.MOUSEEVENTF_MOVE + self.MOUSEEVENTF_ABSOLUTE, x, y, 0, 0)
 
     async def move_to(self, x, y, duration=0):
+        """
+        Move the mouse to the x, y coordinates
+        """
         # We need to get from (startx, starty) to (x, y)
+        wX, wY, *_ = self.get_rect()
+        x += wX
+        y += wY
+
         startx, starty = self.get_position()
         x_offset = x - startx
         y_offset = y - starty
 
+        width, height = screen_size()
+
         steps = [(x, y)]
 
         if duration > MINIMUM_DURATION:
-            num_steps = max(x_offset, y_offset)
+            num_steps = max(width, height)
             sleep_amount = duration / num_steps
 
             if sleep_amount < MINIMUM_SLEEP:
@@ -102,7 +121,7 @@ class Mouse:
         for _x, _y in steps:
             if len(steps) > 1:
                 # A single step doesn't require tweening
-                await time.sleep(sleep_amount)
+                await asyncio.sleep(sleep_amount)
 
             _x = int(round(_x))
             _y = int(round(_y))
@@ -119,17 +138,20 @@ class Mouse:
 
     async def press_button(self, pos=(-1, -1), button="left", button_up=False):
         """push a button of the mouse"""
-        await self.move_mouse(pos)
+        await self.move_to(pos)
         self._do_event(self.get_button_value(button, button_up), 0, 0, 0, 0)
 
-    async def click(self, pos=(-1, -1), button="left"):
+    async def click(self, pos=(-1, -1), button="left", duration=0, delay=0):
         """Click at the specified placed"""
+        self.set_active()
+
         (x, y) = pos
         # If position is not set, use current mouse position
         old_pos = self.get_position()
         x = x if (x != -1) else old_pos[0]
         y = y if (y != -1) else old_pos[1]
-        await self.move_mouse(x, y)
+        await self.move_to(x, y, duration=duration)
+        await asyncio.sleep(delay)
         self._do_event(
             self._get_button_value(button, False)
             + self._get_button_value(button, True),
@@ -150,7 +172,25 @@ class Mouse:
         ctypes.windll.user32.GetCursorPos(ctypes.byref(point))
         return (point.x, point.y)
 
+    def in_rect(self, rect_area):
+        """
+        Returns true if the mouse is in the given region
+        """
+        x, y, w, h = rect_area
+        mouseX, mouseY = self.get_position()
+        return mouseX > x and mouseX < x + w and mouseY > y and mouseY < y + h
+
     def failSafeCheck(self):
         if FAILSAFE and self.get_position() in FAILSAFE_POINTS:
             raise FailSafeException
+
+
+if __name__ == "__main__":
+
+    async def main():
+        mouse = Mouse()
+        mouse._set_position((100, 100))
+        await mouse.move_to(10, 100, duration=1)
+
+    asyncio.run(main())
 

@@ -1,0 +1,17 @@
+README.md
+setup.py
+wizsdk/__init__.py
+wizsdk/battle.py
+wizsdk/card.py
+wizsdk/client.py
+wizsdk/keyboard.py
+wizsdk/mouse.py
+wizsdk/outline.py
+wizsdk/pixels.py
+wizsdk/utils.py
+wizsdk/window.py
+wizsdk.egg-info/PKG-INFO
+wizsdk.egg-info/SOURCES.txt
+wizsdk.egg-info/dependency_links.txt
+wizsdk.egg-info/requires.txt
+wizsdk.egg-info/top_level.txt

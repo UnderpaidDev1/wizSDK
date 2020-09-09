@@ -1,4 +1,5 @@
 import ctypes
+import asyncio
 from ctypes import WinDLL
 from collections import namedtuple
 
@@ -8,11 +9,15 @@ user32 = WinDLL("user32")
 
 
 def get_all_wiz_handles():
+    """
+    Retrieves all window handles for windows that have the 
+    'Wizard Graphical Client' class
+    """
     target_class = "Wizard Graphical Client"
 
     handles = []
 
-    # callback takes a window handle and an lparam and returns true/false on if we should stop
+    # callback takes a window handle and an lparam and returns true/false on if we should keep going
     # iterating
     # https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms633498(v=vs.85)
     def callback(handle, _):
@@ -22,7 +27,7 @@ def get_all_wiz_handles():
             handles.append(handle)
 
         # iterate all windows
-        return False
+        return 1
 
     # https://docs.python.org/3/library/ctypes.html#callback-functions
     enumwindows_func_type = ctypes.WINFUNCTYPE(
@@ -40,3 +45,6 @@ def get_all_wiz_handles():
     user32.EnumWindows(callback, 0)
 
     return handles
+
+async def finish_all_loading(*players):
+    await asyncio.gather(*[player.finish_loading() for player in players])
