@@ -141,7 +141,7 @@ class Mouse(Window):
         await self.move_to(x, y)
         self._do_event(self.get_button_value(button, button_up), 0, 0, 0, 0)
 
-    async def click(self, x=-1, y=-1, button="left", duration=None, delay=0):
+    async def click(self, x=-1, y=-1, button="left", duration=None, delay=0.1):
         """Click at the specified placed"""
         self.set_active()
 
