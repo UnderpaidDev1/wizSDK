@@ -87,7 +87,7 @@ class Mouse(Window):
         y = y if (y != -1) else old_pos[1]
         self._do_event(self.MOUSEEVENTF_MOVE + self.MOUSEEVENTF_ABSOLUTE, x, y, 0, 0)
 
-    async def move_to(self, x, y, duration=0):
+    async def move_to(self, x, y, duration=0.5):
         """
         Move the mouse to the x, y coordinates
         """
@@ -136,16 +136,22 @@ class Mouse(Window):
         if (_x, _y) not in FAILSAFE_POINTS:
             self.failSafeCheck()
 
-    async def press_button(self, pos=(-1, -1), button="left", button_up=False):
+    async def press_button(self, x=-1, y=-1, button="left", button_up=False):
         """push a button of the mouse"""
-        await self.move_to(pos)
+        await self.move_to(x, y)
         self._do_event(self.get_button_value(button, button_up), 0, 0, 0, 0)
 
-    async def click(self, pos=(-1, -1), button="left", duration=0, delay=0):
+    async def click(self, x=-1, y=-1, button="left", duration=None, delay=0):
         """Click at the specified placed"""
         self.set_active()
 
-        (x, y) = pos
+        # Set default duration
+        if duration is None:
+            if x == -1 and y == -1:
+                duration = 0
+            else:
+                duration = 0.5
+
         # If position is not set, use current mouse position
         old_pos = self.get_position()
         x = x if (x != -1) else old_pos[0]
@@ -179,6 +185,16 @@ class Mouse(Window):
         x, y, w, h = rect_area
         mouseX, mouseY = self.get_position()
         return mouseX > x and mouseX < x + w and mouseY > y and mouseY < y + h
+
+    async def move_out(self, rect_area):
+        """
+        Move the mouse outside of the given rect
+        If the mouse is already outside, return
+        """
+        while self.in_rect(rect_area):
+            # TODO find fastest way out of rect
+            x, y = self.get_position()
+            await self.move_to(x, y - 20, duration=0.1)
 
     def failSafeCheck(self):
         if FAILSAFE and self.get_position() in FAILSAFE_POINTS:

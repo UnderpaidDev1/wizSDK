@@ -22,7 +22,7 @@ class Keyboard(KeyboardHandler):
             code = ord(char)
 
         user32.PostMessageW(self.window_handle, 0x102, code, 0)
-    
+
     def type_keycode(self, code):
         user32.PostMessageW(self.window_handle, 0x102, code, 0)
 

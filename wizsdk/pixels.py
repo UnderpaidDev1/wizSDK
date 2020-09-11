@@ -147,7 +147,7 @@ def to_cv2_img(data):
         # It's a file name
         img = cv2.imread(data)
         if img is None:
-            print(f'Unable to find `{data}`')
+            print(f"Unable to find `{data}`")
         return img
 
     elif type(data) is np.ndarray:
@@ -170,7 +170,7 @@ def match_image(largeImg, smallImg, threshold=0.1, debug=False):
     large_image = to_cv2_img(largeImg)
 
     if (small_image is None) or (large_image is None):
-        print('Error: large_image or small_image is None')
+        print("Error: large_image or small_image is None")
         return False
 
     w, h = small_image.shape[:-1]
@@ -181,6 +181,9 @@ def match_image(largeImg, smallImg, threshold=0.1, debug=False):
     mn, _, mnLoc, _ = cv2.minMaxLoc(result)
 
     if mn >= threshold:
+        if debug:
+            cv2.imshow("output", large_image)
+            cv2.waitKey(0)
         return False
 
     # Extract the coordinates of our best match
@@ -192,7 +195,7 @@ def match_image(largeImg, smallImg, threshold=0.1, debug=False):
         trows, tcols = small_image.shape[:2]
 
         # If I don't call this a get a TypeError :P
-        large_image = np.array(large_image) 
+        large_image = np.array(large_image)
         # Draw the rectangle on large_image
         cv2.rectangle(large_image, (x, y), (x + tcols, y + trows), (0, 0, 255), 2)
 
