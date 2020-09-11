@@ -3,4 +3,7 @@ dist
 wizapi.egg-info
 venv
 test
+spells
 pyvenv.cfg
+__main__.py
+__pycache__

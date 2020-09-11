@@ -24,6 +24,14 @@ version = "1.4.4"
 
 [[package]]
 category = "main"
+description = "Small python library to allow \"async chaining\""
+name = "asyncchain"
+optional = false
+python-versions = ">=3.7,<4.0"
+version = "0.1.0"
+
+[[package]]
+category = "main"
 description = "reference implementation of PEP 3156"
 name = "asyncio"
 optional = false
@@ -221,7 +229,7 @@ loguru = ">=0.5.1,<0.6.0"
 pymem = "1.3"
 
 [metadata]
-content-hash = "762652b3071133a6290dc7134267deddb0305882910f3282e3d31d2ef31904ce"
+content-hash = "a2b3e5de5073b1c4ce42251f9f244712ca1fe9dfcfa7cd5ede30e54b648f047b"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -236,6 +244,10 @@ aiofiles = [
 appdirs = [
     {file = "appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"},
     {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
+]
+asyncchain = [
+    {file = "asyncchain-0.1.0-py3-none-any.whl", hash = "sha256:47a16d5f4aebd81b8ee5dacb9b91ba3f6b021ddb7ef0064d76598f5a076e42d5"},
+    {file = "asyncchain-0.1.0.tar.gz", hash = "sha256:2e367fe26080210f844e62a2afcd1c84950efc7fb7e9976f08695a1037b76cbb"},
 ]
 asyncio = [
     {file = "asyncio-3.4.3-cp33-none-win32.whl", hash = "sha256:b62c9157d36187eca799c378e572c969f0da87cd5fc42ca372d92cdb06e7e1de"},
