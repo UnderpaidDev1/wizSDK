@@ -20,6 +20,9 @@ from .battle import Battle
 from .card import Card
 
 
+SPELLS_FOLDER = "spells"
+
+
 user32 = ctypes.windll.user32
 __DIRNAME__ = os.path.dirname(__file__)
 all_clients = []
@@ -314,7 +317,9 @@ class Client(DeviceContext, Keyboard, Window):
         if not spell_name[-4:] in extensions:
             file_name += ".png"
 
-        res = match_image(b_spell_area, ("spells/" + file_name), threshold, debug=False)
+        spell_path = os.path.join(SPELLS_FOLDER, file_name)
+
+        res = match_image(b_spell_area, spell_path, threshold, debug=False)
 
         if res:
             x, y = res
