@@ -1,4 +1,7 @@
+# Third-party imports
 import asyncio
+
+# Custom imports
 from .mouse import Mouse
 
 
@@ -26,11 +29,11 @@ class Card:
         enchant_is_before = self.spell_x < spell.spell_x
         # click self
         await self.client.mouse.click(
-            self.spell_x, self.spell_y, duration=0.3, delay=0.3
+            self.spell_x, self.spell_y, duration=0.3, delay=0.6
         )
         # click spell
         await self.client.mouse.click(
-            spell.spell_x, spell.spell_y, duration=0.3, delay=0.3
+            spell.spell_x, spell.spell_y, duration=0.3, delay=0.6
         )
         # calculate new spell_x of enchanted spell
 
@@ -55,7 +58,7 @@ class Card:
         """
         self.client.log(f"Casting {self.name}")
         await self.client.mouse.click(
-            self.spell_x, self.spell_y, duration=0.3, delay=0.3
+            self.spell_x, self.spell_y, duration=0.3, delay=0.6
         )
 
         if target != None:
@@ -70,5 +73,5 @@ class Card:
                     f"Invalid value for target, expect int between 0 - 7, got {target}"
                 )
                 return False
-            await self.client.mouse.click(x, y, duration=0.3, delay=0.3)
+            await self.client.mouse.click(x, y, duration=0.3, delay=0.6)
 

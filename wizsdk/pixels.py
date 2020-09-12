@@ -1,7 +1,12 @@
+# Native imports
 import ctypes
 import ctypes.wintypes
+
+# Third-party imports
 import numpy as np
 import cv2
+
+# Custom imports
 from .window import Window
 
 user32 = ctypes.WinDLL("user32.dll")

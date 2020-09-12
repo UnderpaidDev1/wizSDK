@@ -1,14 +1,16 @@
+# Native imports
 import ctypes
-from ctypes import WinDLL
-import os
+import os, sys
+
+# Third-party imports
 import cv2
 import numpy
 import asyncio
 import wizwalker
-
-# from asyncchain import ChainMeta
 from wizwalker.utils import calculate_perfect_yaw
+from simple_chalk import chalk
 
+# Custom imports
 from .utils import get_all_wiz_handles, XYZYaw
 from .pixels import DeviceContext, match_image
 from .keyboard import Keyboard
@@ -18,7 +20,7 @@ from .battle import Battle
 from .card import Card
 
 
-user32 = WinDLL("user32")
+user32 = ctypes.windll.user32
 __DIRNAME__ = os.path.dirname(__file__)
 all_clients = []
 
@@ -67,6 +69,9 @@ class Client(DeviceContext, Keyboard, Window):
         # A window exists, add it to global variable
         all_clients.append(client)
 
+        # Start `_anti_disconnect` task
+        client._anti_disconnect_task = asyncio.create_task(client._anti_disconnect())
+
         client.walker = wizwalker.Client(client.window_handle)
 
         client.activate_hooks = client.walker.activate_hooks
@@ -82,13 +87,24 @@ class Client(DeviceContext, Keyboard, Window):
         if self.logging:
             s = ""
             if self.name != None:
-                s += f"[{self.name}] "
+                s += chalk.magentaBright(f"[{self.name}] ")
             s += message
             print(s)
+            sys.stdout.flush()
+
+    async def _anti_disconnect(self):
+        while True:
+            # Wait 5 minute
+            await asyncio.sleep(5 * 60)
+            # Sent alt key to stay awake
+            await self.send_key("ENTER", 0.1)
+            await self.send_key("ENTER", 0.1)
+            await self.send_key("O", 0.1)
 
     async def unregister(self):
         """ Properly unregister hooks and more """
         user32.SetWindowTextW(self.window_handle, "Wizard101")
+        self._anti_disconnect_task.cancel()
         await self.walker.close()
         return 1
 
@@ -116,8 +132,9 @@ class Client(DeviceContext, Keyboard, Window):
         return spellbook_brown and spellbook_yellow
 
     def is_dialog_more(self):
-        more_burgundy = self.pixel_matches_color((669, 611), (112, 32, 54), 20)
-        return more_burgundy
+        more_lower_right = self.pixel_matches_color((669, 611), (112, 32, 54), 15)
+        more_top_left = self.pixel_matches_color((585, 609), (115, 32, 56), 15)
+        return more_lower_right and more_top_left
 
     def is_health_low(self):
         # Matches a pixel in the lower third of the health globe
@@ -158,7 +175,7 @@ class Client(DeviceContext, Keyboard, Window):
         while self.is_idle():
             await asyncio.sleep(0.2)
 
-        while not self.is_idle():
+        while not self.is_idle() or self.is_crown_shop():
             await asyncio.sleep(0.5)
 
         await asyncio.sleep(1)
@@ -181,7 +198,26 @@ class Client(DeviceContext, Keyboard, Window):
                 await self.send_key("SPACEBAR", 0.1)
                 await asyncio.sleep(0.1)
 
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(1)
+
+    async def logout_and_in(self, confirm=False):
+        self.log("Loging out")
+        await self.send_key("ESC", 0.1)
+        await self.mouse.click(259, 506, delay=0.3)
+        if confirm:
+            await self.mouse.click(415, 415, delay=0.5)
+        # wait for player select screen
+        print("Wait for loading")
+        while not (self.pixel_matches_color((361, 599), (133, 36, 62), tolerance=20)):
+            await self.wait(0.5)
+
+        print("Log back in")
+        await self.mouse.click(395, 594)
+        await self.finish_loading()
+        if self.is_crown_shop():
+            await self.wait(0.5)
+            await self.send_key("ESC", 0.1)
+            await self.send_key("ESC", 0.1)
 
     """
     POSITION & MOVEMENT
@@ -190,11 +226,26 @@ class Client(DeviceContext, Keyboard, Window):
     async def get_quest_xyz(self):
         return await self.walker.quest_xyz()
 
-    async def teleport_to(self, location):
+    async def teleport_to(self, location: XYZYaw):
+        """
+        Teleports to XYZYaw location
+        Will return immediately if player movement is locked
+        """
+        if await self.walker.move_lock():
+            return
+
         await self.walker.teleport(**location._asdict())
         await self.send_key("W", 0.1)
 
     async def walk_to(self, location):
+        """
+        Walks to XYZYaw location in a **straight** line only
+        Will _not_ work if there are obstacles in the way. Ideal for short distances
+        Will return immediately if player movement is locked
+        """
+        if await self.walker.move_lock():
+            return
+
         await self.walker.goto(location.x, location.y)
 
     async def teleport_to_friend(self, match_img):
@@ -270,10 +321,10 @@ class Client(DeviceContext, Keyboard, Window):
             # We're only interested in the x position
             offset_x = self._spell_area[0]
             # a card width is 52 pixels, round to the nearest 1/2 card (26 pixels)
-            adjusted_x = round(x / 25) * 25
+            adjusted_x = round(x / 26) * 26
 
             spell_pos = offset_x + adjusted_x
-            return Card(self.client, spell_name, spell_pos)
+            return Card(self, spell_name, spell_pos)
         else:
             return None
 
@@ -282,3 +333,56 @@ class Client(DeviceContext, Keyboard, Window):
         Clicks `pass`
         """
         self.click(254, 398, delay=0.5)
+
+
+def register_clients(
+    n_windows_expected: int, names: list = [], confirm_position: bool = False
+):
+    """
+    n_windows_expected: the expected # of wiz windows opened. Use -1 for undetermined
+    order_string: A string outputed to guide the user into placing the windows in the expected order
+    """
+    accepted = False
+    while not accepted:
+        windows = get_all_wiz_handles()
+        n_windows = len(windows)
+
+        if n_windows != n_windows_expected and n_windows_expected > 0:
+            print(
+                f"Invalid number of windows open. {n_windows_expected} required, {n_windows} detected."
+            )
+            os.system("pause")
+            exit()
+        else:
+            print(f"{n_windows} windows detected")
+
+        # Fill names array if necessary
+        for i in range(n_windows - len(names)):
+            names.append(None)
+
+        # Register and order the windows from left to right, top to bottom
+        def sortFunc(win):
+            rect = win.get_rect()
+            round_y = (rect[1] // 100) * 100
+            return rect[0] + (round_y * 10)
+
+        windows.sort(key=sortFunc)
+
+        w = [
+            Client.register(handle=windows[i], name=names[i]) for i in range(n_windows)
+        ]
+
+        if confirm_position:
+            print("Is this order ok?")
+            answer = input("[y] or n: ")
+            if answer.lower().strip()[0] == "y" or answer == "":
+                accepted = True
+            else:
+                print("Re-order the windows")
+                os.system("pause")
+        else:
+            accepted = True
+
+    # Returns the sorted clients in an array
+    return w
+

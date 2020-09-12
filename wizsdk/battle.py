@@ -1,4 +1,11 @@
+# Native imports
+import sys
+
+# Third-party imports
 import asyncio
+from simple_chalk import chalk
+
+# Custom imports
 from .pixels import DeviceContext, match_image
 from .card import Card
 
@@ -23,13 +30,22 @@ class Battle(DeviceContext):
         self._spell_area = (245, 290, 370, 70)
         self._enemy_area = (68, 26, 650, 35)
 
+    async def loop(self):
+        if not self.in_progress and not self.is_over:
+            await self.start()
+            return True
+        else:
+            await self.next_turn()
+            return not self.is_over
+
     def log(self, message):
         if self.logging:
             s = ""
             if self.name != None:
-                s += f"\033[94m[{self.name}]\033[0m "
+                s += chalk.blueBright(f"[{self.name}] ")
             s += message
             print(s)
+            sys.stdout.flush()
 
     def print_round(self):
         self.log(f"----------- Battle round {self.round_count} -----------")

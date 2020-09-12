@@ -1,6 +1,11 @@
+# Native imports
 import ctypes
 from ctypes.wintypes import POINT
+
+# Third-party imports
 import asyncio
+
+# Custom imports
 from .window import Window, screen_size
 
 # If the mouse is over a coordinate in FAILSAFE_POINTS and FAILSAFE is True, the FailSafeException is raised.

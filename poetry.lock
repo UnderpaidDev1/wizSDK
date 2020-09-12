@@ -186,6 +186,14 @@ checkqa-mypy = ["mypy (v0.761)"]
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xmlschema"]
 
 [[package]]
+category = "main"
+description = "A terminal string styling library"
+name = "simple-chalk"
+optional = false
+python-versions = ">=3.6"
+version = "0.1.0"
+
+[[package]]
 category = "dev"
 description = "Python 2 and 3 compatibility utilities"
 name = "six"
@@ -219,7 +227,7 @@ description = "Automation bot for wizard101"
 name = "wizwalker"
 optional = false
 python-versions = ">=3.8,<4.0"
-version = "0.12.3"
+version = "0.13.0"
 
 [package.dependencies]
 aioconsole = ">=0.2.1,<0.3.0"
@@ -229,7 +237,7 @@ loguru = ">=0.5.1,<0.6.0"
 pymem = "1.3"
 
 [metadata]
-content-hash = "a2b3e5de5073b1c4ce42251f9f244712ca1fe9dfcfa7cd5ede30e54b648f047b"
+content-hash = "ec6966a8bd3541d4baf8f32c1e8df277c70a52a0dd5ea86ac13c6f1d9c0e210e"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -349,6 +357,9 @@ pytest = [
     {file = "pytest-5.4.3-py3-none-any.whl", hash = "sha256:5c0db86b698e8f170ba4582a492248919255fcd4c79b1ee64ace34301fb589a1"},
     {file = "pytest-5.4.3.tar.gz", hash = "sha256:7979331bfcba207414f5e1263b5a0f8f521d0f457318836a7355531ed1a4c7d8"},
 ]
+simple-chalk = [
+    {file = "simple_chalk-0.1.0.tar.gz", hash = "sha256:d80f55993dfa040c1b55d2fbfb925e4fbb5798c2934601aa448ef4a192d84196"},
+]
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
     {file = "six-1.15.0.tar.gz", hash = "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"},
@@ -362,6 +373,6 @@ win32-setctime = [
     {file = "win32_setctime-1.0.2.tar.gz", hash = "sha256:47aa7c43548c1fc0a4f026d1944b748b37036df116c7c4cf908e82638d854313"},
 ]
 wizwalker = [
-    {file = "wizwalker-0.12.3-py3-none-any.whl", hash = "sha256:152edc6f0ad7b496481cf4b4c6431879fb9ef0c1b582b913a8a982e9838f4cab"},
-    {file = "wizwalker-0.12.3.tar.gz", hash = "sha256:2efd083adde1e206f8acecbeb47b536ee72828e317aa6c67f1c9a0b4974d119c"},
+    {file = "wizwalker-0.13.0-py3-none-any.whl", hash = "sha256:4dcb3dca0160c34e275e2ec1630d5d51c629bce1ad11ddda2b2081e89262608e"},
+    {file = "wizwalker-0.13.0.tar.gz", hash = "sha256:32c09e6c0b75ed084388a7ae48721ddb25b3d9cee710b5f9401c7fda8f6b92b1"},
 ]

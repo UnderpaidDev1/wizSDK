@@ -1,11 +1,14 @@
+# Native imports
 import ctypes
-import asyncio
-from ctypes import WinDLL
 from collections import namedtuple
+
+# Third-party imports
+import asyncio
+
 
 XYZYaw = namedtuple("XYZYaw", "x y z yaw")
 
-user32 = WinDLL("user32")
+user32 = ctypes.windll.user32
 
 
 def get_all_wiz_handles():
@@ -45,6 +48,11 @@ def get_all_wiz_handles():
     user32.EnumWindows(callback, 0)
 
     return handles
+
+
+def count_wiz_clients():
+    return len(get_all_wiz_handles())
+
 
 async def finish_all_loading(*players):
     await asyncio.gather(*[player.finish_loading() for player in players])

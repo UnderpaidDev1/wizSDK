@@ -1,14 +1,19 @@
+# Native imports
 import ctypes
 import ctypes.wintypes
-import asyncio
-from wizwalker.windows.keyboard import KeyboardHandler
 
-user32 = ctypes.WinDLL("user32.dll")
+# Third-party imports
+import asyncio
+
+# Custom imports
+from wizwalker.windows.input import InputHandler
+
+user32 = ctypes.windll.user32
 
 keycode_map = {"TAB": 9, "ENTER": 13, "ALT": 18, "ESC": 27, "SPACE": 32}
 
 
-class Keyboard(KeyboardHandler):
+class Keyboard(InputHandler):
     def __init__(self, window_handle):
         super().__init__(window_handle)
         self.window_handle = window_handle
