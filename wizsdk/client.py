@@ -337,7 +337,7 @@ class Client(DeviceContext, Keyboard, Window):
         """
         Clicks `pass`
         """
-        self.click(254, 398, delay=0.5)
+        self.mouse.click(254, 398, delay=0.5)
 
 
 def register_clients(
@@ -345,7 +345,7 @@ def register_clients(
 ):
     """
     n_windows_expected: the expected # of wiz windows opened. Use -1 for undetermined
-    order_string: A string outputed to guide the user into placing the windows in the expected order
+    names: A list of strings that will serve as the names of the windows
     """
     accepted = False
     while not accepted:

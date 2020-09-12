@@ -88,7 +88,7 @@ class Battle(DeviceContext):
             self.round_count += 1
             self.print_round()
 
-    def get_enemy_pos(self):
+    def get_enemy_positions(self):
         """
         Returns a list of length 4 with 0, if no enemy is present at the 
         location, or 1 if an enemy is present
@@ -105,3 +105,8 @@ class Battle(DeviceContext):
 
         return enemies
 
+    def get_enemy_count(self):
+        """
+        Returns the number enemies in the fight
+        """
+        return sum(self.get_enemy_positions())
