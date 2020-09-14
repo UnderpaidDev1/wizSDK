@@ -44,6 +44,7 @@ class Client(DeviceContext, Keyboard, Window):
         # rectangles defined as (x, y, width, height)
         self._friends_area = (625, 65, 20, 240)
         self._spell_area = (245, 290, 370, 70)
+        self._confirm_area = (355, 370, 100, 70)
 
         self.walker = None
         self.mouse = Mouse(handle)
@@ -101,11 +102,9 @@ class Client(DeviceContext, Keyboard, Window):
 
     async def _anti_disconnect(self):
         while True:
-            # Wait 5 minute
-            await asyncio.sleep(5 * 60)
-            # Sent alt key to stay awake
-            await self.send_key("ENTER", 0.1)
-            await self.send_key("ENTER", 0.1)
+            # Wait 10 minute
+            await asyncio.sleep(10 * 60)
+            # Sent o key to stay awake
             await self.send_key("O", 0.1)
 
     async def unregister(self):
@@ -161,6 +160,18 @@ class Client(DeviceContext, Keyboard, Window):
         x_area = self.get_image(region=(350, 540, 100, 20))
         found = match_image(x_area, __DIRNAME__ + "/images/x.png")
         return found != False
+
+    def get_confirm(self):
+        confirm_img = self.get_image(self._confirm_area)
+        found = match_image(
+            confirm_img, __DIRNAME__ + "/images/confirm.png", threshold=0.3
+        )
+        if found:
+            x = found[0] + self._confirm_area[0]
+            y = found[1] + self._confirm_area[1]
+            found = (x, y)
+
+        return found
 
     """
     ACTIONS BASED ON STATES
@@ -226,6 +237,21 @@ class Client(DeviceContext, Keyboard, Window):
             await self.send_key("ESC", 0.1)
             await self.send_key("ESC", 0.1)
 
+    async def press_x(self):
+        while not self.is_press_x():
+            await self.wait(0.5)
+        await self.send_key("X", 0.1)
+
+    async def click_confirm(self):
+
+        confirm = self.get_confirm()
+        while not confirm:
+            await self.wait(0.5)
+            confirm = self.get_confirm()
+
+        await self.mouse.click(*confirm, delay=0.2)
+        await self.wait(0.5)
+
     """
     POSITION & MOVEMENT
     """
@@ -265,15 +291,17 @@ class Client(DeviceContext, Keyboard, Window):
         self.set_active()
         # Check if friends already opened (and close it)
         while self.pixel_matches_color((780, 364), (230, 0, 0), 40):
-            await self.mouse.click(780, 364).wait(0.2)
+            await self.mouse.click(780, 364, duration=0.1)
+            await self.wait(0.2)
 
         # Open friend menu
-        await self.mouse.click(780, 50)
+        await self.mouse.click(780, 50, duration=0.2)
+        await self.wait(0.2)
 
         # Find friend that matches friend match_img
         friend_area_img = self.get_image(region=self._friends_area)
 
-        found = match_image(friend_area_img, match_img)
+        found = match_image(friend_area_img, match_img, threshold=0.2)
 
         if found is not False:
             _, y = found
