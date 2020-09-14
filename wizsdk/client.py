@@ -164,7 +164,7 @@ class Client(DeviceContext, Keyboard, Window):
     def get_confirm(self):
         confirm_img = self.get_image(self._confirm_area)
         found = match_image(
-            confirm_img, __DIRNAME__ + "/images/confirm.png", threshold=0.3
+            confirm_img, __DIRNAME__ + "/images/confirm.png", threshold=0.2
         )
         if found:
             x = found[0] + self._confirm_area[0]
@@ -223,7 +223,7 @@ class Client(DeviceContext, Keyboard, Window):
         await self.send_key("ESC", 0.1)
         await self.mouse.click(259, 506, delay=0.3)
         if confirm:
-            await self.mouse.click(415, 415, delay=0.5)
+            await self.click_confirm()
         # wait for player select screen
         print("Wait for loading")
         while not (self.pixel_matches_color((361, 599), (133, 36, 62), tolerance=20)):
@@ -249,7 +249,7 @@ class Client(DeviceContext, Keyboard, Window):
             await self.wait(0.5)
             confirm = self.get_confirm()
 
-        await self.mouse.click(*confirm, delay=0.2)
+        await self.mouse.click(*confirm, duration=0.3, delay=0.2)
         await self.wait(0.5)
 
     """
@@ -312,7 +312,8 @@ class Client(DeviceContext, Keyboard, Window):
             # Select port
             await self.mouse.click(450, 115, duration=0.2, delay=0.5)
             # Select yes
-            await self.mouse.click(415, 395, duration=0.2, delay=0.5)
+            await self.click_confirm()
+            await self.wait(1)
 
             return self
         else:
