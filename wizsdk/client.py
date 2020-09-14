@@ -82,9 +82,13 @@ class Client(DeviceContext, Keyboard, Window):
         client.mouse = Mouse(client.window_handle)
 
         if name:
-            client.name = name
-            user32.SetWindowTextW(client.window_handle, f"[{name}] Wizard101")
+            client.set_name(name)
+
         return client
+
+    def set_name(self, name):
+        self.name = name
+        user32.SetWindowTextW(self.window_handle, f"[{name}] Wizard101")
 
     def log(self, message):
         if self.logging:
@@ -341,42 +345,46 @@ class Client(DeviceContext, Keyboard, Window):
 
 
 def register_clients(
-    n_windows_expected: int, names: list = [], confirm_position: bool = False
+    n_handles_expected: int, names: list = [], confirm_position: bool = False
 ):
     """
-    n_windows_expected: the expected # of wiz windows opened. Use -1 for undetermined
+    n_handles_expected: the expected # of wiz windows opened. Use -1 for undetermined
     names: A list of strings that will serve as the names of the windows
     """
     accepted = False
     while not accepted:
-        windows = get_all_wiz_handles()
-        n_windows = len(windows)
+        handles = get_all_wiz_handles()
+        n_handles = len(handles)
 
-        if n_windows != n_windows_expected and n_windows_expected > 0:
+        if n_handles != n_handles_expected and n_handles_expected > 0:
             print(
-                f"Invalid number of windows open. {n_windows_expected} required, {n_windows} detected."
+                f"Invalid number of windows open. {n_handles_expected} required, {n_handles} detected."
             )
             os.system("pause")
             exit()
         else:
-            print(f"{n_windows} windows detected")
+            print(f"{n_handles} windows detected")
 
         # Fill names array if necessary
-        for i in range(n_windows - len(names)):
+        for i in range(n_handles - len(names)):
             names.append(None)
 
         # Register and order the windows from left to right, top to bottom
+        w = [Client.register(handle=handles[i]) for i in range(n_handles)]
+
+        # Sort
         def sortFunc(win):
             rect = win.get_rect()
             round_y = (rect[1] // 100) * 100
             return rect[0] + (round_y * 10)
 
-        windows.sort(key=sortFunc)
+        w.sort(key=sortFunc)
 
-        w = [
-            Client.register(handle=windows[i], name=names[i]) for i in range(n_windows)
-        ]
+        # Set names
+        for i in range(len(w)):
+            w[i].set_name(names[i])
 
+        # Confirm position
         if confirm_position:
             print("Is this order ok?")
             answer = input("[y] or n: ")
