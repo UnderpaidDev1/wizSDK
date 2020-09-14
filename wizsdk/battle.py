@@ -28,7 +28,8 @@ class Battle(DeviceContext):
 
         # rectangles defined as (x, y, width, height)
         self._spell_area = (245, 290, 370, 70)
-        self._enemy_area = (68, 26, 650, 35)
+        self._enemy_area = (68, 26, 650, 50)
+        self._ally_area = (140, 580, 650, 50)
 
     async def loop(self):
         if not self.in_progress and not self.is_over:
@@ -110,3 +111,31 @@ class Battle(DeviceContext):
         Returns the number enemies in the fight
         """
         return sum(self.get_enemy_positions())
+
+    def find_enemy(self, enemy_image):
+        """ 
+        Attemps to find the position of an enemy the matches the image provided 
+        returns 0, 1, 2, 3 if found otherwise returns False
+        """
+        enemy_area = self.get_image(region=self._enemy_area)
+
+        found = match_image(enemy_area, enemy_image, threshold=0.2)
+
+        if found:
+            return round((found[0] - 60) / 170)
+
+        return False
+
+    def find_ally(self, ally_image):
+        """ 
+        Attemps to find the position of an ally the matches the image provided 
+        returns 4, 5, 6, 7 if found otherwise returns False
+        """
+        ally_area = self.get_image(region=self._ally_area)
+
+        found = match_image(ally_area, ally_image, threshold=0.2)
+
+        if found:
+            return 7 - round((found[0] - 100) / 170)
+
+        return False
