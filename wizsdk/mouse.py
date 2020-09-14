@@ -14,7 +14,7 @@ from .window import Window, screen_size
 FAILSAFE = True
 FAILSAFE_POINTS = [(0, 0)]
 MINIMUM_DURATION = 0.1
-MINIMUM_SLEEP = 0.05
+MINIMUM_SLEEP = 0.01
 
 
 class FailSafeException(Exception):
