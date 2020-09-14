@@ -183,23 +183,35 @@ class Mouse(Window):
         ctypes.windll.user32.GetCursorPos(ctypes.byref(point))
         return (point.x, point.y)
 
+    def get_rel_position(self):
+        """get mouse position relative to window"""
+        wx, wy = self.get_rect()[:2]
+        x, y = self.get_position()
+        return (x - wx, y - wy)
+
     def in_rect(self, rect_area):
         """
         Returns true if the mouse is in the given region
         """
         x, y, w, h = rect_area
+        wx, wy = self.get_rect()[:2]
+        # Make the position of the rect relative to the window
+        x += wx
+        y += wy
+
         mouseX, mouseY = self.get_position()
-        return mouseX > x and mouseX < x + w and mouseY > y and mouseY < y + h
+        return mouseX > x and mouseX < (x + w) and mouseY > y and mouseY < (y + h)
 
     async def move_out(self, rect_area):
         """
         Move the mouse outside of the given rect
         If the mouse is already outside, return
         """
+        x, y = self.get_rel_position()
         while self.in_rect(rect_area):
             # TODO find fastest way out of rect
-            x, y = self.get_position()
-            await self.move_to(x, y - 20, duration=0.1)
+            y -= 100
+            await self.move_to(x, y, duration=0.2)
 
     def failSafeCheck(self):
         if FAILSAFE and self.get_position() in FAILSAFE_POINTS:
