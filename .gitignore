@@ -7,3 +7,6 @@ _spells
 pyvenv.cfg
 __main__.py
 **/__pycache__
+
+boss_match.png
+friend_match.png
