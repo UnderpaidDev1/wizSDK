@@ -32,6 +32,9 @@ class Battle(DeviceContext):
         self._ally_area = (140, 580, 650, 50)
 
     async def loop(self):
+        """
+        Takes care of the looping logic for a battle
+        """
         if not self.in_progress and not self.is_over:
             await self.start()
             return True
@@ -61,6 +64,10 @@ class Battle(DeviceContext):
         return flee_yellow and flee_brown
 
     async def start(self) -> None:
+        """
+        Waits for the first round then signals to the class that the battle has started.
+        used in the `loop()` method
+        """
         while not self.is_turn():
             await asyncio.sleep(1)
 
@@ -74,6 +81,7 @@ class Battle(DeviceContext):
         Sleeps until next round or fight has ended
         Sets `is_over` to True if the fight has ended
         Increase the `round_count` otherwise
+        Used in the `loop()` method
         """
         while self.is_turn():
             await asyncio.sleep(1)
@@ -114,7 +122,7 @@ class Battle(DeviceContext):
 
     def find_enemy(self, enemy_image):
         """ 
-        Attemps to find the position of an enemy the matches the image provided 
+        Attemps to find the position of an enemy that matches the image provided 
         returns 0, 1, 2, 3 if found otherwise returns False
         """
         enemy_area = self.get_image(region=self._enemy_area)

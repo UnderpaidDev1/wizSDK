@@ -1,9 +1,9 @@
 .vscode/
 dist
-wizapi.egg-info
+wizsdk.egg-info
 venv
 test
-spells
+_spells
 pyvenv.cfg
 __main__.py
-__pycache__
+**/__pycache__

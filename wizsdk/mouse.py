@@ -1,9 +1,7 @@
 # Native imports
 import ctypes
 from ctypes.wintypes import POINT
-
-# Third-party imports
-import asyncio
+import time
 
 # Custom imports
 from .window import Window, screen_size
@@ -14,7 +12,7 @@ from .window import Window, screen_size
 FAILSAFE = True
 FAILSAFE_POINTS = [(0, 0)]
 MINIMUM_DURATION = 0.1
-MINIMUM_SLEEP = 0.01
+MINIMUM_SLEEP = 0.02
 
 
 class FailSafeException(Exception):
@@ -38,7 +36,10 @@ def getPointOnLine(x1, y1, x2, y2, n):
 
 
 class Mouse(Window):
-    """It simulates the mouse"""
+    """
+    It simulates the mouse
+    Due to there being only 1 mouse, all methods are syncronous
+    """
 
     MOUSEEVENTF_MOVE = 0x0001  # mouse move
     MOUSEEVENTF_LEFTDOWN = 0x0002  # left button down
@@ -94,9 +95,11 @@ class Mouse(Window):
 
     async def move_to(self, x, y, duration=0.5):
         """
-        Move the mouse to the x, y coordinates
+        Move the mouse to the x, y coordinates relative to the window
         """
         # We need to get from (startx, starty) to (x, y)
+
+        # Set the X, Y to be relative to the window position
         wX, wY, *_ = self.get_rect()
         x += wX
         y += wY
@@ -126,7 +129,7 @@ class Mouse(Window):
         for _x, _y in steps:
             if len(steps) > 1:
                 # A single step doesn't require tweening
-                await asyncio.sleep(sleep_amount)
+                time.sleep(sleep_amount)
 
             _x = int(round(_x))
             _y = int(round(_y))
@@ -141,9 +144,9 @@ class Mouse(Window):
         if (_x, _y) not in FAILSAFE_POINTS:
             self.failSafeCheck()
 
-    async def press_button(self, x=-1, y=-1, button="left", button_up=False):
+    def press_button(self, x=-1, y=-1, button="left", button_up=False):
         """push a button of the mouse"""
-        await self.move_to(x, y)
+        self.move_to(x, y)
         self._do_event(self.get_button_value(button, button_up), 0, 0, 0, 0)
 
     async def click(self, x=-1, y=-1, button="left", duration=None, delay=0.1):
@@ -162,7 +165,7 @@ class Mouse(Window):
         x = x if (x != -1) else old_pos[0]
         y = y if (y != -1) else old_pos[1]
         await self.move_to(x, y, duration=duration)
-        await asyncio.sleep(delay)
+        time.sleep(delay)
         self._do_event(
             self._get_button_value(button, False)
             + self._get_button_value(button, True),
@@ -172,10 +175,10 @@ class Mouse(Window):
             0,
         )
 
-    async def double_click(self, pos=(-1, -1), button="left"):
+    def double_click(self, pos=(-1, -1), button="left"):
         """Double click at the specifed placed"""
         for i in xrange(2):
-            await self.click(pos, button)
+            self.click(pos, button)
 
     def get_position(self):
         """get mouse position"""

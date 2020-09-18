@@ -243,13 +243,13 @@ class Client(DeviceContext, Keyboard, Window):
         await self.send_key("X", 0.1)
 
     async def click_confirm(self):
-
+        await self.wait(0.2)  #
         confirm = self.get_confirm()
         while not confirm:
             await self.wait(0.5)
             confirm = self.get_confirm()
 
-        await self.mouse.click(*confirm, duration=0.3, delay=0.2)
+        await self.mouse.click(*confirm, duration=0.2, delay=0.2)
         await self.wait(0.5)
 
     """
@@ -257,12 +257,17 @@ class Client(DeviceContext, Keyboard, Window):
     """
 
     async def get_quest_xyz(self):
+        """
+        Returns the X, Y, Z coordinates to the quest destionation
+        Requires the `quest_struct` hook to be activated
+        """
         return await self.walker.quest_xyz()
 
     async def teleport_to(self, location: XYZYaw):
         """
         Teleports to XYZYaw location
         Will return immediately if player movement is locked
+        Requires the `player_struct` hook to be activated
         """
         if await self.walker.move_lock():
             return
@@ -272,9 +277,10 @@ class Client(DeviceContext, Keyboard, Window):
 
     async def walk_to(self, location):
         """
-        Walks to XYZYaw location in a **straight** line only
+        Walks to XYZYaw location in a **straight** line only.
         Will _not_ work if there are obstacles in the way. Ideal for short distances
         Will return immediately if player movement is locked
+        Requires the `player_struct` hook to be activated
         """
         if await self.walker.move_lock():
             return
@@ -321,6 +327,10 @@ class Client(DeviceContext, Keyboard, Window):
             return False
 
     async def face_quest_destination(self):
+        """
+        Changes the player's yaw to be facing the quest destination.
+        *Note:* depending on your location, this may differ from where your quest arrow is pointing to
+        """
         xyz = await self.walker.xyz()
         quest_xyz = await self.walker.quest_xyz()
         yaw = calculate_perfect_yaw(xyz, quest_xyz)
@@ -330,7 +340,10 @@ class Client(DeviceContext, Keyboard, Window):
     BATTLE ACTIONS & METHODS
     """
 
-    def get_battle(self, name=None):
+    def get_battle(self, name=None) -> Battle:
+        """
+        Returns a `Battle` object linked to this client
+        """
         return Battle(self, name)
 
     async def find_spell(self, spell_name, threshold=0.1) -> Card:
@@ -368,9 +381,10 @@ class Client(DeviceContext, Keyboard, Window):
 
     async def pass_turn(self) -> None:
         """
-        Clicks `pass`
+        Clicks `pass` while in a battle
         """
-        self.mouse.click(254, 398, delay=0.5)
+        await self.mouse.click(254, 398, duration=0.2, delay=0.5)
+        await self.wait(0.5)
 
 
 def register_clients(

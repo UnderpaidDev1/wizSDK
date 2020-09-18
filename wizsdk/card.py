@@ -28,13 +28,9 @@ class Card:
         card_width = 52
         enchant_is_before = self.spell_x < spell.spell_x
         # click self
-        await self.client.mouse.click(
-            self.spell_x, self.spell_y, duration=0.3, delay=0.6
-        )
+        self.client.mouse.click(self.spell_x, self.spell_y, duration=0.3, delay=0.6)
         # click spell
-        await self.client.mouse.click(
-            spell.spell_x, spell.spell_y, duration=0.3, delay=0.6
-        )
+        self.client.mouse.click(spell.spell_x, spell.spell_y, duration=0.3, delay=0.6)
         # calculate new spell_x of enchanted spell
 
         # TODO
@@ -46,6 +42,7 @@ class Card:
 
         new_name = f"{self.name}-{spell.name}"
 
+        await asyncio.sleep(0.2)
         return Card(self.client, new_name, new_pos)
 
     async def cast(self, target=None):
@@ -57,9 +54,7 @@ class Card:
           7 6 5 4
         """
         self.client.log(f"Casting {self.name}")
-        await self.client.mouse.click(
-            self.spell_x, self.spell_y, duration=0.3, delay=0.6
-        )
+        self.client.mouse.click(self.spell_x, self.spell_y, duration=0.3, delay=0.6)
 
         if target != None:
             if target < 4:
@@ -73,5 +68,8 @@ class Card:
                     f"Invalid value for target, expect int between 0 - 7, got {target}"
                 )
                 return False
-            await self.client.mouse.click(x, y, duration=0.3, delay=0.6)
+            self.client.mouse.click(x, y, duration=0.3, delay=0.6)
+            await asyncio.sleep(
+                0.5
+            )  # Helps when changing the active state of overlapping windows.
 
