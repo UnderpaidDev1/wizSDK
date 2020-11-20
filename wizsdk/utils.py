@@ -25,8 +25,12 @@ def get_all_wiz_handles():
     # https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms633498(v=vs.85)
     def callback(handle, _):
         class_name = ctypes.create_unicode_buffer(len(target_class))
+        win_title = ctypes.create_unicode_buffer(100)
+
         user32.GetClassNameW(handle, class_name, len(target_class) + 1)
-        if target_class == class_name.value:
+        user32.GetWindowTextW(handle, win_title, 101)
+
+        if (target_class == class_name.value) or ("Wizard101" in win_title.value):
             handles.append(handle)
 
         # iterate all windows

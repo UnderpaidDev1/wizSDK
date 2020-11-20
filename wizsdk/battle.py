@@ -10,8 +10,6 @@ from .pixels import DeviceContext, match_image
 from .card import Card
 
 # TODO
-# Find enemy
-# Find friend
 
 
 class Battle(DeviceContext):
@@ -59,8 +57,8 @@ class Battle(DeviceContext):
         Returns if it's our turn to play
         by matching pixels in the `flee` button
         """
-        flee_yellow = self.pixel_matches_color((550, 400), (255, 255, 0), tolerance=10)
-        flee_brown = self.pixel_matches_color((578, 394), (124, 68, 0), tolerance=20)
+        flee_yellow = self.pixel_matches_color((550, 400), (255, 255, 0), tolerance=30)
+        flee_brown = self.pixel_matches_color((578, 394), (124, 68, 0), tolerance=30)
         return flee_yellow and flee_brown
 
     async def start(self) -> None:

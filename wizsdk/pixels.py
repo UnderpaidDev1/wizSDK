@@ -150,7 +150,7 @@ class DeviceContext(Window):
 def to_cv2_img(data):
     if type(data) is str:
         # It's a file name
-        img = cv2.imread(data)
+        img = cv2.imdecode(np.fromfile(data, dtype=np.uint8), cv2.IMREAD_UNCHANGED)
         if img is None:
             print(f"Unable to find `{data}`")
         return img

@@ -49,6 +49,10 @@ class Client(DeviceContext, Keyboard, Window):
         self.walker = None
         self.mouse = Mouse(handle)
 
+        # Health and Mana (*only updated after fights)
+        self.health = 9999
+        self.mana = 999
+
     @classmethod
     def register(cls, nth=0, name=None, handle=None, hooks=[]):
         """
@@ -106,6 +110,7 @@ class Client(DeviceContext, Keyboard, Window):
             await asyncio.sleep(10 * 60)
             # Sent o key to stay awake
             await self.send_key("O", 0.1)
+            await self.send_key("O", 0.1)
 
     async def unregister(self):
         """ Properly unregister hooks and more """
@@ -123,6 +128,37 @@ class Client(DeviceContext, Keyboard, Window):
     STATE DETECTION
     """
 
+    async def get_health(self):
+        refresh_triggered = False
+        mem_health = await self.walker.health()
+        while (not mem_health) or (mem_health < 0) or (mem_health > 20_000):
+            if not refresh_triggered:
+                # Open and close character page to force memory update
+                self.log("Refreshing health value")
+                await self.send_key("C", 0.1)
+                await self.wait(0.8)
+                await self.send_key("C", 0.1)
+                refresh_triggered = True
+            await self.wait(0.2)
+            mem_health = await self.walker.health()
+
+        return mem_health
+
+    async def get_mana(self):
+        refresh_triggered = False
+        mem_mana = await self.walker.mana()
+        while (not mem_mana) or (mem_mana < 0) or (mem_mana > 2_000):
+            if not refresh_triggered:
+                self.log("Refreshing mana value")
+                # Open and close character page to force memory update
+                await self.send_key("C", 0.1)
+                await self.send_key("C", 0.1)
+                refresh_triggered = True
+            await self.wait(0.2)
+            mem_mana = await self.walker.mana()
+
+        return mem_mana
+
     def is_crown_shop(self):
         """ Matches a red pixel in the close icon of the opened crown shop menu """
         return self.pixel_matches_color((788, 53), (197, 40, 41), 10)
@@ -130,11 +166,13 @@ class Client(DeviceContext, Keyboard, Window):
     def is_idle(self):
         """ Matches pixels in the spell book (only visible when not in battle) """
         spellbook_yellow = self.pixel_matches_color(
-            (781, 551), (255, 251, 64), tolerance=20
+            (781, 551), (255, 251, 64), tolerance=40
         )
         spellbook_brown = self.pixel_matches_color(
-            (728, 587), (79, 29, 29), tolerance=20
+            (728, 587), (79, 29, 29), tolerance=40
         )
+        # print("brown", spellbook_brown)
+        # print("yellow", spellbook_yellow)
         return spellbook_brown and spellbook_yellow
 
     def is_dialog_more(self):
@@ -177,14 +215,17 @@ class Client(DeviceContext, Keyboard, Window):
     ACTIONS BASED ON STATES
     """
 
-    async def use_potion_if_needed(self):
-        mana_low = self.is_mana_low()
-        health_low = self.is_health_low()
+    async def use_potion_if_needed(self, health=1000, mana=20):
+        h = await self.get_health()
+        m = await self.get_mana()
+
+        mana_low = m < mana
+        health_low = h < health
 
         if mana_low:
-            self.log("Mana is low, using potion")
+            self.log(f"Mana is at {m}, using potion")
         if health_low:
-            self.log("Health is low, using potion")
+            self.log(f"Health is at {h}, using potion")
         if mana_low or health_low:
             await self.mouse.click(160, 590, delay=0.2)
 
@@ -346,14 +387,19 @@ class Client(DeviceContext, Keyboard, Window):
         """
         return Battle(self, name)
 
-    async def find_spell(self, spell_name, threshold=0.1) -> Card:
+    async def find_spell(self, spell_name, threshold=0.08) -> Card:
         """
         Searches spell area for an image matching `spell_name`
         Returns x positions of spell if found
         returns None if not found
         """
+        # Move into the window if the window isn't active
+        if not self.is_active():
+            self.set_active()
+            await self.mouse.move_to(100, 100, duration=0.2)
         # Move mouse out of area to get a clear image
-        await self.mouse.move_out(self._spell_area)
+        else:
+            await self.mouse.move_out(self._spell_area)
 
         # Get screenshot of `spell_area`
         b_spell_area = self.get_image(self._spell_area)
