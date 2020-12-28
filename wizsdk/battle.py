@@ -8,6 +8,7 @@ from simple_chalk import chalk
 # Custom imports
 from .pixels import DeviceContext, match_image
 from .card import Card
+from .utils import packaged_img
 
 # TODO
 
@@ -20,6 +21,9 @@ class Battle(DeviceContext):
         self.logging = self.client.logging
         self.is_idle = self.client.is_idle
         self.name = name
+
+        self.going_first = False
+        self.enemy_first = False
 
         self.is_over = False
         self.in_progress = False
@@ -71,7 +75,16 @@ class Battle(DeviceContext):
 
         self.is_over = False
         self.in_progress = True
+
+        self.enemy_first = self.is_enemy_first()
+        self.going_first = not self.enemy_first
+
         self.log("Battle is starting")
+        if self.enemy_first:
+            self.log("Enemy is going first")
+        else:
+            self.log("You are going first")
+
         self.print_round()
 
     async def next_turn(self) -> None:
@@ -145,3 +158,12 @@ class Battle(DeviceContext):
             return 7 - round((found[0] - 100) / 170)
 
         return False
+
+    def is_enemy_first(self):
+        turn_arrow_region = (230, 240, 80, 60)
+        return bool(
+            self.client.locate_on_screen(
+                packaged_img("enemy-first.png"), region=turn_arrow_region
+            )
+        )
+

@@ -1,10 +1,7 @@
 # Native imports
-import ctypes
+import ctypes, os
 from collections import namedtuple
-
-# Third-party imports
 import asyncio
-
 
 XYZYaw = namedtuple("XYZYaw", "x y z yaw")
 
@@ -60,3 +57,7 @@ def count_wiz_clients():
 
 async def finish_all_loading(*players):
     await asyncio.gather(*[player.finish_loading() for player in players])
+
+
+def packaged_img(filename):
+    return os.path.dirname(__file__) + "/images/" + filename

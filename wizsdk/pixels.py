@@ -150,7 +150,8 @@ class DeviceContext(Window):
 def to_cv2_img(data):
     if type(data) is str:
         # It's a file name
-        img = cv2.imdecode(np.fromfile(data, dtype=np.uint8), cv2.IMREAD_UNCHANGED)
+        # cv2.IMREAD_COLOR ignores alpha channel, loads only rgb
+        img = cv2.imdecode(np.fromfile(data, dtype=np.uint8), cv2.IMREAD_COLOR)
         if img is None:
             print(f"Unable to find `{data}`")
         return img
@@ -180,7 +181,16 @@ def match_image(largeImg, smallImg, threshold=0.1, debug=False):
 
     w, h = small_image.shape[:-1]
 
-    result = cv2.matchTemplate(small_image, large_image, method)
+    if debug:
+        print("large_image:", large_image.shape)
+        print("small_image:", small_image.shape)
+
+    try:
+        result = cv2.matchTemplate(small_image, large_image, method)
+    except cv2.error as e:
+        # The image was not found. like, not even close. :P
+        print(e)
+        return False
 
     # We want the minimum squared difference
     mn, _, mnLoc, _ = cv2.minMaxLoc(result)
@@ -195,6 +205,7 @@ def match_image(largeImg, smallImg, threshold=0.1, debug=False):
     x, y = mnLoc
 
     if debug:
+        print(f"Match at ({x}, {y}) relative to region")
         # Draw the rectangle:
         # Get the size of the template. This is the same size as the match.
         trows, tcols = small_image.shape[:2]

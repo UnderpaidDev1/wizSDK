@@ -11,7 +11,7 @@ from wizwalker.utils import calculate_perfect_yaw
 from simple_chalk import chalk
 
 # Custom imports
-from .utils import get_all_wiz_handles, XYZYaw
+from .utils import get_all_wiz_handles, XYZYaw, packaged_img
 from .pixels import DeviceContext, match_image
 from .keyboard import Keyboard
 from .mouse import Mouse
@@ -161,7 +161,7 @@ class Client(DeviceContext, Keyboard, Window):
 
     def is_crown_shop(self):
         """ Matches a red pixel in the close icon of the opened crown shop menu """
-        return self.pixel_matches_color((788, 53), (197, 40, 41), 10)
+        return self.pixel_matches_color((788, 53), (197, 40, 41), 50)
 
     def is_idle(self):
         """ Matches pixels in the spell book (only visible when not in battle) """
@@ -196,20 +196,39 @@ class Client(DeviceContext, Keyboard, Window):
 
     def is_press_x(self):
         x_area = self.get_image(region=(350, 540, 100, 20))
-        found = match_image(x_area, __DIRNAME__ + "/images/x.png")
+        found = match_image(x_area, packaged_img("x.png"))
         return found != False
 
     def get_confirm(self):
         confirm_img = self.get_image(self._confirm_area)
-        found = match_image(
-            confirm_img, __DIRNAME__ + "/images/confirm.png", threshold=0.2
-        )
+        found = match_image(confirm_img, packaged_img("confirm.png"), threshold=0.2)
         if found:
             x = found[0] + self._confirm_area[0]
             y = found[1] + self._confirm_area[1]
             found = (x, y)
 
         return found
+
+    def locate_on_screen(self, match_img, region=None, threshold=0.1, debug=False):
+        """
+        Attempts to locate `match_img` in the Wizard101 window.
+        Returns (x, y) tuple for center of match if found. False otherwise.
+        pass a rect tuple `(x, y, width, height)` as the `region` argument to narrow 
+        down the area to look for the image.
+        Adjust `threshold` for the precision of the match (between 0 and 1, the lowest being more precise).
+        Set `debug` to True for extra debug info
+        
+        """
+        match = match_image(
+            self.get_image(region=region), match_img, threshold, debug=debug
+        )
+
+        if not match or not region:
+            return match
+
+        region_x, region_y = region[:2]
+        x, y = match
+        return (x + region_x, y + region_y)
 
     """
     ACTIONS BASED ON STATES
@@ -234,7 +253,7 @@ class Client(DeviceContext, Keyboard, Window):
         while self.is_idle():
             await asyncio.sleep(0.2)
 
-        while not self.is_idle() or self.is_crown_shop():
+        while not (self.is_idle() or self.is_crown_shop()):
             await asyncio.sleep(0.5)
 
         await asyncio.sleep(1)
@@ -387,7 +406,7 @@ class Client(DeviceContext, Keyboard, Window):
         """
         return Battle(self, name)
 
-    async def find_spell(self, spell_name, threshold=0.08) -> Card:
+    async def find_spell(self, spell_name, threshold=0.1) -> Card:
         """
         Searches spell area for an image matching `spell_name`
         Returns x positions of spell if found
