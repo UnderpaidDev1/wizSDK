@@ -19,9 +19,7 @@ from .window import Window
 from .battle import Battle
 from .card import Card
 
-
 SPELLS_FOLDER = "spells"
-
 
 user32 = ctypes.windll.user32
 __DIRNAME__ = os.path.dirname(__file__)
@@ -228,7 +226,7 @@ class Client(DeviceContext, Keyboard, Window):
 
         region_x, region_y = region[:2]
         x, y = match
-        return (x + region_x, y + region_y)
+        return x + region_x, y + region_y
 
     """
     ACTIONS BASED ON STATES
@@ -279,7 +277,7 @@ class Client(DeviceContext, Keyboard, Window):
         await asyncio.sleep(1)
 
     async def logout_and_in(self, confirm=False):
-        self.log("Loging out")
+        self.log("Logging out")
         await self.send_key("ESC", 0.1)
         await self.mouse.click(259, 506, delay=0.3)
         if confirm:
@@ -289,7 +287,7 @@ class Client(DeviceContext, Keyboard, Window):
         while not (self.pixel_matches_color((361, 599), (133, 36, 62), tolerance=20)):
             await self.wait(0.5)
 
-        print("Log back in")
+        print("Logging back in")
         await self.mouse.click(395, 594)
         await self.finish_loading()
         if self.is_crown_shop():
@@ -318,10 +316,19 @@ class Client(DeviceContext, Keyboard, Window):
 
     async def get_quest_xyz(self):
         """
-        Returns the X, Y, Z coordinates to the quest destionation
+        Returns the X, Y, Z coordinates to the quest destination
         Requires the `quest_struct` hook to be activated
         """
         return await self.walker.quest_xyz()
+
+    async def get_player_location(self):
+        """
+        Fetches the player's XYZYaw location
+        Requires the `player_struct` hook to be activated
+        """
+        xyz = await self.walker.xyz()
+        yaw = await self.walker.yaw()
+        return XYZYaw(x=xyz.x, y=xyz.y, z=xyz.z, yaw=yaw)
 
     async def teleport_to(self, location: XYZYaw):
         """
@@ -383,7 +390,7 @@ class Client(DeviceContext, Keyboard, Window):
 
             return self
         else:
-            self.log("Friend cound not be found")
+            self.log("Friend could not be found")
             return False
 
     async def face_quest_destination(self):
@@ -453,7 +460,7 @@ class Client(DeviceContext, Keyboard, Window):
 
 
 def register_clients(
-    n_handles_expected: int, names: list = [], confirm_position: bool = False
+        n_handles_expected: int, names: list = [], confirm_position: bool = False
 ):
     """
     n_handles_expected: the expected # of wiz windows opened. Use -1 for undetermined
@@ -481,12 +488,12 @@ def register_clients(
         w = [Client.register(handle=handles[i]) for i in range(n_handles)]
 
         # Sort
-        def sortFunc(win):
+        def sort_func(win):
             rect = win.get_rect()
             round_y = (rect[1] // 100) * 100
             return rect[0] + (round_y * 10)
 
-        w.sort(key=sortFunc)
+        w.sort(key=sort_func)
 
         # Set names
         for i in range(len(w)):
@@ -506,4 +513,3 @@ def register_clients(
 
     # Returns the sorted clients in an array
     return w
-
