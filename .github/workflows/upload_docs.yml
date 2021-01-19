@@ -1,0 +1,44 @@
+name: Upload_docs
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install poetry
+        run: py -3.8 -m pip install poetry
+      - name: Install deps
+        run: poetry install
+      - name: Build docs
+        run: poetry run sphinx-build docs docs/_build/html
+      - uses: actions/upload-artifact@v1
+        with:
+          name: HTML_DOCS
+          path: docs/_build/html
+      - name: Commit documentation changes
+        run: |
+          git clone https://github.com/UnderpaidDev1/wizSDK.git --branch gh-pages --single-branch gh-pages
+          xcopy /E /I /Y "docs\_build\html" "gh-pages"
+          cd gh-pages
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Update documentation" -a
+        shell: cmd
+      - name: Push changes
+        if: ${{ success() }}
+        uses: ad-m/github-push-action@master
+        with:
+          branch: gh-pages
+          directory: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
