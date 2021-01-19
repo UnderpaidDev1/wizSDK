@@ -10,10 +10,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
-import sys
+# import os
+# import sys
 
-sys.path.insert(0, os.path.abspath(".."))
+# sys.path.insert(0, os.path.abspath(".."))
 
 
 # -- Project information -----------------------------------------------------
@@ -22,13 +22,23 @@ project = "WizSDK"
 copyright = "2021, UnderpaidDev"
 author = "UnderpaidDev"
 
+# Get version from toml file
+import re
+
+with open("../pyproject.toml") as fp:
+    version = re.search(
+        r'\[tool.poetry\]\nname = "\w+"\n(version ?= ?"(\d+\.\d+\.\d+)")', fp.read()
+    ).group(2)
 
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.autodoc"]
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
