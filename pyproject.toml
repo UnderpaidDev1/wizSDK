@@ -13,9 +13,12 @@ opencv-python = "^4.4.0"
 asyncchain = "^0.1.0"
 wizwalker = "^0.13.0"
 simple_chalk = "^0.1.0"
+Sphinx = "^3.4.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
+Sphinx = "^3.4.3"
+sphinx-rtd-theme = "^0.5.1"
 
 [build-system]
 requires = ["poetry>=0.12"]
