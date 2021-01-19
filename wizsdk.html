@@ -386,17 +386,6 @@ Requires the <cite>quest_struct</cite> hook to be activated</p>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="wizsdk.client.Client.locate_on_screen">
-<code class="sig-name descname">locate_on_screen</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">match_img</span></em>, <em class="sig-param"><span class="n">region</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">debug</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.locate_on_screen" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attempts to locate <cite>match_img</cite> in the Wizard101 window.
-Returns (x, y) tuple for center of match if found. False otherwise.
-pass a rect tuple <cite>(x, y, width, height)</cite> as the <cite>region</cite> argument to narrow
-down the area to look for the image.
-Adjust <cite>threshold</cite> for the precision of the match (between 0 and 1, the lowest being more precise).
-Set <cite>debug</cite> to True for extra debug info</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="wizsdk.client.Client.log">
 <code class="sig-name descname">log</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.log" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -660,6 +649,17 @@ This function was copied from pytweening module, so that it can be called even i
 <dd></dd></dl>
 
 <dl class="py method">
+<dt id="wizsdk.pixels.DeviceContext.locate_on_screen">
+<code class="sig-name descname">locate_on_screen</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">match_img</span></em>, <em class="sig-param"><span class="n">region</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">debug</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.pixels.DeviceContext.locate_on_screen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to locate <cite>match_img</cite> in the Wizard101 window.
+Returns (x, y) tuple for center of match if found. False otherwise.
+pass a rect tuple <cite>(x, y, width, height)</cite> as the <cite>region</cite> argument to narrow
+down the area to look for the image.
+Adjust <cite>threshold</cite> for the precision of the match (between 0 and 1, the lowest being more precise).
+Set <cite>debug</cite> to True for extra debug info</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="wizsdk.pixels.DeviceContext.pixel_matches_color">
 <code class="sig-name descname">pixel_matches_color</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xy</span></em>, <em class="sig-param"><span class="n">expected_rgb</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.pixels.DeviceContext.pixel_matches_color" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -715,12 +715,14 @@ Returns false if no match was found with the given threshold</p>
 <dl class="py function">
 <dt id="wizsdk.utils.count_wiz_clients">
 <code class="sig-prename descclassname">wizsdk.utils.</code><code class="sig-name descname">count_wiz_clients</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.utils.count_wiz_clients" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the number of wizard101 clients detected</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="wizsdk.utils.finish_all_loading">
 <em class="property">async </em><code class="sig-prename descclassname">wizsdk.utils.</code><code class="sig-name descname">finish_all_loading</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">players</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.utils.finish_all_loading" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Wait for all players passed in as arguments to have gone through the loading screen.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt id="wizsdk.utils.get_all_wiz_handles">
@@ -732,7 +734,14 @@ Returns false if no match was found with the given threshold</p>
 <dl class="py function">
 <dt id="wizsdk.utils.packaged_img">
 <code class="sig-prename descclassname">wizsdk.utils.</code><code class="sig-name descname">packaged_img</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.utils.packaged_img" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Helper function to reference images packaged with the WizSDK module</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="wizsdk.utils.user32">
+<code class="sig-prename descclassname">wizsdk.utils.</code><code class="sig-name descname">user32</code><em class="property"> = &lt;WinDLL 'user32', handle 7ff957a60000&gt;</em><a class="headerlink" href="#wizsdk.utils.user32" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to store player location</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-wizsdk.window">
