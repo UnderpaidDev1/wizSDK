@@ -16,7 +16,7 @@ gdi32 = ctypes.WinDLL("gdi32.dll")
 # by Starrfox
 
 
-class BITMAPINFOHEADER(ctypes.Structure):
+class _BITMAPINFOHEADER(ctypes.Structure):
     _fields_ = [
         ("biSize", ctypes.c_uint32),
         ("biWidth", ctypes.c_int),
@@ -32,7 +32,7 @@ class BITMAPINFOHEADER(ctypes.Structure):
     ]
 
 
-class BITMAP(ctypes.Structure):
+class _BITMAP(ctypes.Structure):
     _fields_ = [
         ("bmType", ctypes.c_long),
         ("bmWidth", ctypes.c_long),
@@ -70,13 +70,13 @@ class DeviceContext(Window):
 
         gdi32.BitBlt(mDC, 0, 0, w, h, wDC, x, y, 0x00CC0020)
 
-        bitmap = BITMAP()
+        bitmap = _BITMAP()
 
         # Don't know what that does
-        gdi32.GetObjectA(mBM, ctypes.sizeof(BITMAP), ctypes.byref(bitmap))
+        gdi32.GetObjectA(mBM, ctypes.sizeof(_BITMAP), ctypes.byref(bitmap))
 
-        bi = BITMAPINFOHEADER()
-        bi.biSize = ctypes.sizeof(BITMAPINFOHEADER)
+        bi = _BITMAPINFOHEADER()
+        bi.biSize = ctypes.sizeof(_BITMAPINFOHEADER)
         bi.biWidth = bitmap.bmWidth
         bi.biHeight = bitmap.bmHeight
         bi.biPlanes = 1
@@ -147,7 +147,7 @@ class DeviceContext(Window):
             ), f"Color mode was expected to be length 3 (RGB), but pixel is length {len(pix)} and expected_RGB is length { len(expected_rgb)}"
 
 
-def to_cv2_img(data):
+def _to_cv2_img(data):
     if type(data) is str:
         # It's a file name
         # cv2.IMREAD_COLOR ignores alpha channel, loads only rgb
@@ -172,8 +172,8 @@ def match_image(largeImg, smallImg, threshold=0.1, debug=False):
 
     method = cv2.TM_SQDIFF_NORMED
 
-    small_image = to_cv2_img(smallImg)
-    large_image = to_cv2_img(largeImg)
+    small_image = _to_cv2_img(smallImg)
+    large_image = _to_cv2_img(largeImg)
 
     if (small_image is None) or (large_image is None):
         print("Error: large_image or small_image is None")

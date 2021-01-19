@@ -4,6 +4,7 @@ from .card import Card
 from .battle import Battle
 from .mouse import Mouse
 from .keyboard import Keyboard
+from .pixels import match_image
 
 # Clean up on exit
 import ctypes
