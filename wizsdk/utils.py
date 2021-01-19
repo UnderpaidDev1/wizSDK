@@ -3,9 +3,12 @@ import ctypes, os
 from collections import namedtuple
 import asyncio
 
-XYZYaw = namedtuple("XYZYaw", "x y z yaw")
-
 user32 = ctypes.windll.user32
+
+"""
+Used to store player location
+"""
+XYZYaw = namedtuple("XYZYaw", "x y z yaw")
 
 
 def get_all_wiz_handles():
@@ -52,12 +55,21 @@ def get_all_wiz_handles():
 
 
 def count_wiz_clients():
+    """
+    Returns the number of wizard101 clients detected
+    """
     return len(get_all_wiz_handles())
 
 
 async def finish_all_loading(*players):
+    """
+    Wait for all players passed in as arguments to have gone through the loading screen.
+    """
     await asyncio.gather(*[player.finish_loading() for player in players])
 
 
 def packaged_img(filename):
+    """
+    Helper function to reference images packaged with the WizSDK module
+    """
     return os.path.dirname(__file__) + "/images/" + filename

@@ -146,6 +146,27 @@ class DeviceContext(Window):
                 False
             ), f"Color mode was expected to be length 3 (RGB), but pixel is length {len(pix)} and expected_RGB is length { len(expected_rgb)}"
 
+    def locate_on_screen(self, match_img, region=None, threshold=0.1, debug=False):
+        """
+        Attempts to locate `match_img` in the Wizard101 window.
+        Returns (x, y) tuple for center of match if found. False otherwise.
+        pass a rect tuple `(x, y, width, height)` as the `region` argument to narrow 
+        down the area to look for the image.
+        Adjust `threshold` for the precision of the match (between 0 and 1, the lowest being more precise).
+        Set `debug` to True for extra debug info
+        
+        """
+        match = match_image(
+            self.get_image(region=region), match_img, threshold, debug=debug
+        )
+
+        if not match or not region:
+            return match
+
+        region_x, region_y = region[:2]
+        x, y = match
+        return x + region_x, y + region_y
+
 
 def _to_cv2_img(data):
     if type(data) is str:

@@ -207,27 +207,6 @@ class Client(DeviceContext, Keyboard, Window):
 
         return found
 
-    def locate_on_screen(self, match_img, region=None, threshold=0.1, debug=False):
-        """
-        Attempts to locate `match_img` in the Wizard101 window.
-        Returns (x, y) tuple for center of match if found. False otherwise.
-        pass a rect tuple `(x, y, width, height)` as the `region` argument to narrow 
-        down the area to look for the image.
-        Adjust `threshold` for the precision of the match (between 0 and 1, the lowest being more precise).
-        Set `debug` to True for extra debug info
-        
-        """
-        match = match_image(
-            self.get_image(region=region), match_img, threshold, debug=debug
-        )
-
-        if not match or not region:
-            return match
-
-        region_x, region_y = region[:2]
-        x, y = match
-        return x + region_x, y + region_y
-
     """
     ACTIONS BASED ON STATES
     """
@@ -460,7 +439,7 @@ class Client(DeviceContext, Keyboard, Window):
 
 
 def register_clients(
-        n_handles_expected: int, names: list = [], confirm_position: bool = False
+    n_handles_expected: int, names: list = [], confirm_position: bool = False
 ):
     """
     n_handles_expected: the expected # of wiz windows opened. Use -1 for undetermined
