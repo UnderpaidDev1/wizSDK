@@ -4,7 +4,7 @@ from ctypes.wintypes import POINT
 import time
 
 # Custom imports
-from .window import Window, screen_size
+from wizsdk.window import Window, screen_size
 
 # If the mouse is over a coordinate in FAILSAFE_POINTS and FAILSAFE is True, the FailSafeException is raised.
 # The rest of the points are added to the FAILSAFE_POINTS list at the bottom of this file, after size() has been defined.
@@ -16,6 +16,10 @@ MINIMUM_SLEEP = 0.02
 
 
 class FailSafeException(Exception):
+    """
+    Exception raised when the mouse is over (0, 0). Protactive measure to regain control of your mouse.
+    """
+
     def __init__(
         self,
         message="Mouse fail-safe triggered from mouse moving to a corner of the screen.",
@@ -37,21 +41,20 @@ def getPointOnLine(x1, y1, x2, y2, n):
 
 class Mouse(Window):
     """
-    It simulates the mouse
-    Due to there being only 1 mouse, all methods are syncronous
+    Class for controlling the computer's mouse.
     """
 
-    MOUSEEVENTF_MOVE = 0x0001  # mouse move
-    MOUSEEVENTF_LEFTDOWN = 0x0002  # left button down
-    MOUSEEVENTF_LEFTUP = 0x0004  # left button up
-    MOUSEEVENTF_RIGHTDOWN = 0x0008  # right button down
-    MOUSEEVENTF_RIGHTUP = 0x0010  # right button up
-    MOUSEEVENTF_MIDDLEDOWN = 0x0020  # middle button down
-    MOUSEEVENTF_MIDDLEUP = 0x0040  # middle button up
-    MOUSEEVENTF_WHEEL = 0x0800  # wheel button rolled
-    MOUSEEVENTF_ABSOLUTE = 0x8000  # absolute move
-    SM_CXSCREEN = 0
-    SM_CYSCREEN = 1
+    _MOUSEEVENTF_MOVE = 0x0001  # mouse move
+    _MOUSEEVENTF_LEFTDOWN = 0x0002  # left button down
+    _MOUSEEVENTF_LEFTUP = 0x0004  # left button up
+    _MOUSEEVENTF_RIGHTDOWN = 0x0008  # right button down
+    _MOUSEEVENTF_RIGHTUP = 0x0010  # right button up
+    _MOUSEEVENTF_MIDDLEDOWN = 0x0020  # middle button down
+    _MOUSEEVENTF_MIDDLEUP = 0x0040  # middle button up
+    _MOUSEEVENTF_WHEEL = 0x0800  # wheel button rolled
+    _MOUSEEVENTF_ABSOLUTE = 0x8000  # absolute move
+    _SM_CXSCREEN = 0
+    _SM_CYSCREEN = 1
 
     def __init__(self, window_handle=None):
         super().__init__(window_handle)
@@ -61,10 +64,10 @@ class Mouse(Window):
     def _do_event(self, flags, x_pos, y_pos, data, extra_info):
         """generate a mouse event"""
         x_calc = int(
-            65536 * x_pos / ctypes.windll.user32.GetSystemMetrics(self.SM_CXSCREEN) + 1
+            65536 * x_pos / ctypes.windll.user32.GetSystemMetrics(self._SM_CXSCREEN) + 1
         )
         y_calc = int(
-            65536 * y_pos / ctypes.windll.user32.GetSystemMetrics(self.SM_CYSCREEN) + 1
+            65536 * y_pos / ctypes.windll.user32.GetSystemMetrics(self._SM_CYSCREEN) + 1
         )
         return ctypes.windll.user32.mouse_event(flags, x_calc, y_calc, data, extra_info)
 
@@ -72,11 +75,11 @@ class Mouse(Window):
         """convert the name of the button into the corresponding value"""
         buttons = 0
         if button_name.find("right") >= 0:
-            buttons = self.MOUSEEVENTF_RIGHTDOWN
+            buttons = self._MOUSEEVENTF_RIGHTDOWN
         if button_name.find("left") >= 0:
-            buttons = buttons + self.MOUSEEVENTF_LEFTDOWN
+            buttons = buttons + self._MOUSEEVENTF_LEFTDOWN
         if button_name.find("middle") >= 0:
-            buttons = buttons + self.MOUSEEVENTF_MIDDLEDOWN
+            buttons = buttons + self._MOUSEEVENTF_MIDDLEDOWN
         if button_up:
             buttons = buttons << 1
         return buttons
@@ -91,7 +94,7 @@ class Mouse(Window):
         old_pos = self.get_position()
         x = x if (x != -1) else old_pos[0]
         y = y if (y != -1) else old_pos[1]
-        self._do_event(self.MOUSEEVENTF_MOVE + self.MOUSEEVENTF_ABSOLUTE, x, y, 0, 0)
+        self._do_event(self._MOUSEEVENTF_MOVE + self._MOUSEEVENTF_ABSOLUTE, x, y, 0, 0)
 
     async def move_to(self, x, y, duration=0.5):
         """
@@ -222,6 +225,7 @@ class Mouse(Window):
 
 
 if __name__ == "__main__":
+    import asyncio
 
     async def main():
         mouse = Mouse()
