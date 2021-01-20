@@ -289,111 +289,188 @@ Returns enchanted spell</p>
 <em class="property">class </em><code class="sig-prename descclassname">wizsdk.client.</code><code class="sig-name descname">Client</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">handle</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wizsdk.pixels.DeviceContext" title="wizsdk.pixels.DeviceContext"><code class="xref py py-class docutils literal notranslate"><span class="pre">wizsdk.pixels.DeviceContext</span></code></a>, <a class="reference internal" href="#wizsdk.keyboard.Keyboard" title="wizsdk.keyboard.Keyboard"><code class="xref py py-class docutils literal notranslate"><span class="pre">wizsdk.keyboard.Keyboard</span></code></a>, <a class="reference internal" href="#wizsdk.window.Window" title="wizsdk.window.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">wizsdk.window.Window</span></code></a></p>
 <dl class="py method">
+<dt id="wizsdk.client.Client.activate_hooks">
+<em class="property">async </em><code class="sig-name descname">activate_hooks</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">hook_names</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.activate_hooks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Activate a number of hooks or pass None/no args to activate all
+:param hook_names: The hooks to activate</p>
+<p class="rubric">Examples</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="wizsdk.client.Client.click_confirm">
 <em class="property">async </em><code class="sig-name descname">click_confirm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.click_confirm" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Waits for the “confirm” prompt, and clicks “confirm”</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.face_quest_destination">
-<em class="property">async </em><code class="sig-name descname">face_quest_destination</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.face_quest_destination" title="Permalink to this definition">¶</a></dt>
+<em class="property">async </em><code class="sig-name descname">face_quest_destination</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#wizsdk.client.Client.face_quest_destination" title="Permalink to this definition">¶</a></dt>
 <dd><p>Changes the player’s yaw to be facing the quest destination.
 <em>Note:</em> depending on your location, this may differ from where your quest arrow is pointing to</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.find_spell">
-<em class="property">async </em><code class="sig-name descname">find_spell</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spell_name</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.1</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#wizsdk.card.Card" title="wizsdk.card.Card">wizsdk.card.Card</a><a class="headerlink" href="#wizsdk.client.Client.find_spell" title="Permalink to this definition">¶</a></dt>
-<dd><p>Searches spell area for an image matching <cite>spell_name</cite>
-Returns x positions of spell if found
-returns None if not found</p>
+<em class="property">async </em><code class="sig-name descname">find_spell</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spell_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.1</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#wizsdk.card.Card" title="wizsdk.card.Card">wizsdk.card.Card</a><a class="headerlink" href="#wizsdk.client.Client.find_spell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches spell area for an image matching <code class="docutils literal notranslate"><span class="pre">spell_name</span></code>
+:param spell_name: The name of the spell as you have it saved in your spells image folder.
+:type spell_name: str
+:param threshold: How precise the match should be. The lower this value, the more exact the match will be.
+:type threshold: float</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>x positions of spell if found, None otherwise</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.finish_loading">
 <em class="property">async </em><code class="sig-name descname">finish_loading</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.finish_loading" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Waits for player to have gone through the loading screen.
+It first waits until it detects the loading screen, then waits until the loading screen is gone.
+If this function is called too late and the player is already out of the loading screen, it will wait indefinitely.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.get_battle">
-<code class="sig-name descname">get_battle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#wizsdk.battle.Battle" title="wizsdk.battle.Battle">wizsdk.battle.Battle</a><a class="headerlink" href="#wizsdk.client.Client.get_battle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <cite>Battle</cite> object linked to this client</p>
+<code class="sig-name descname">get_battle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#wizsdk.battle.Battle" title="wizsdk.battle.Battle">wizsdk.battle.Battle</a><a class="headerlink" href="#wizsdk.client.Client.get_battle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch a <code class="docutils literal notranslate"><span class="pre">battle</span></code> associated with the client
+:param name: Name of battle for logging purposes.
+:type name: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>object with battle methods linked to this client</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#wizsdk.battle.Battle" title="wizsdk.battle.Battle">Battle</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.get_confirm">
 <code class="sig-name descname">get_confirm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.get_confirm" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Detects if a “confirm” prompt is open (either from teleporting a friend or exiting an unfinished dungeon). It does this by matching a “confirm” image.
+:returns: (x, y) where the confirm button has been found
+:rtype: tuple</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.get_health">
-<em class="property">async </em><code class="sig-name descname">get_health</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.get_health" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property">async </em><code class="sig-name descname">get_health</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#wizsdk.client.Client.get_health" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get’s health value from memory. Triggers the player_stat_hook if needed.
+:returns: The health value of the player as an int</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.get_mana">
-<em class="property">async </em><code class="sig-name descname">get_mana</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.get_mana" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property">async </em><code class="sig-name descname">get_mana</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#wizsdk.client.Client.get_mana" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get’s mana value from memory. Triggers the player_stat_hook if needed.
+:returns: The mana value of the player as an int</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.get_player_location">
-<em class="property">async </em><code class="sig-name descname">get_player_location</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.get_player_location" title="Permalink to this definition">¶</a></dt>
+<em class="property">async </em><code class="sig-name descname">get_player_location</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#wizsdk.utils.XYZYaw" title="wizsdk.utils.XYZYaw">wizsdk.utils.XYZYaw</a><a class="headerlink" href="#wizsdk.client.Client.get_player_location" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetches the player’s XYZYaw location
-Requires the <cite>player_struct</cite> hook to be activated</p>
+Requires the <cite>player_struct</cite> hook to be activated
+:returns: (X, Y, Z, Yaw) values of the player’s position and direction.
+:rtype: XYZYaw</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.get_quest_xyz">
-<em class="property">async </em><code class="sig-name descname">get_quest_xyz</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.get_quest_xyz" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the X, Y, Z coordinates to the quest destination
-Requires the <cite>quest_struct</cite> hook to be activated</p>
+<em class="property">async </em><code class="sig-name descname">get_quest_xyz</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; tuple<a class="headerlink" href="#wizsdk.client.Client.get_quest_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the X, Y, Z coordinates to the quest destination
+Requires the <code class="docutils literal notranslate"><span class="pre">quest_struct</span></code> hook to be activated
+:returns: (X, Y, Z) value of the quest goal location.
+:rtype: tuple</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.go_through_dialog">
 <em class="property">async </em><code class="sig-name descname">go_through_dialog</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">times</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.go_through_dialog" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Goes through the prompts of the dialog (“press x” or “more”/”continue”). Waits for “press x” or the dialog box before starting.
+:param times: Defaults to 1</p>
+<blockquote>
+<div><p>The number of times to go through. (When going through quests, you might need to set this to 2. There’s one to hand in the quest, the second to get the next quest)</p>
+</div></blockquote>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.is_crown_shop">
-<code class="sig-name descname">is_crown_shop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.is_crown_shop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Matches a red pixel in the close icon of the opened crown shop menu</p>
+<code class="sig-name descname">is_crown_shop</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#wizsdk.client.Client.is_crown_shop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detects if the crown shop is open by matching a red pixel in the “close” icon.
+:returns: True if the menu is open / False otherwise
+:rtype: bool</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.is_dialog_more">
 <code class="sig-name descname">is_dialog_more</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.is_dialog_more" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Detects if the dialog (from NPCs etc.) is open by matching pixels in the “more” or “done” button.
+:returns: True if the dialog menu is open / False otherwise
+:rtype: bool</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.is_health_low">
 <code class="sig-name descname">is_health_low</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.is_health_low" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>DEPRECATED:
+Detects if the player’s health is low by matching a red pixel in the lower third of the globe.
+:returns: is the health low
+:rtype: bool</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.is_idle">
 <code class="sig-name descname">is_idle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.is_idle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Matches pixels in the spell book (only visible when not in battle)</p>
+<dd><p>Detects if the player is idle (out of loading and not in battle) by matching pixels in the spellbook.
+:returns: True if the player is idle / False otherwise
+:rtype: bool</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.is_mana_low">
 <code class="sig-name descname">is_mana_low</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.is_mana_low" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>DEPRECATED:
+Detects if the player’s mana is low by matching a blue pixel in the lower third of the globe.
+:returns: is the mana low
+:rtype: bool</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.is_press_x">
 <code class="sig-name descname">is_press_x</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.is_press_x" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Detects if the “press x” prompt is present by matching the “x” image.
+:returns: “press X” has been found
+:rtype: bool</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.log">
 <code class="sig-name descname">log</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.log" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Debug log function. Useful to identify which client the log is coming from.
+:param message: The message to log. <code class="docutils literal notranslate"><span class="pre">[client-name]:</span> <span class="pre">message</span></code></p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.logout_and_in">
 <em class="property">async </em><code class="sig-name descname">logout_and_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">confirm</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.logout_and_in" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Logs the user out and then logs it in again.
+:param confirm: Should the bot wait for a “confirm” prompt before continuing. Defaults to False</p>
+<blockquote>
+<div><p>Set to True if logging out durring a battle or to exit an unfinished dungeon.</p>
+</div></blockquote>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.pass_turn">
@@ -404,68 +481,111 @@ Requires the <cite>quest_struct</cite> hook to be activated</p>
 <dl class="py method">
 <dt id="wizsdk.client.Client.press_x">
 <em class="property">async </em><code class="sig-name descname">press_x</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.press_x" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Waits for the “press x” prompt and sends the “X” key.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.register">
 <em class="property">classmethod </em><code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nth</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">handle</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hooks</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.register" title="Permalink to this definition">¶</a></dt>
-<dd><p>Assigns the instance to a wizard101 window (Required before using any other API functions)</p>
+<dd><p>Assigns the instance to a wizard101 window (Required before using any other SDK methods)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.set_name">
 <code class="sig-name descname">set_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.set_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Sets the window title. Useful to identify which window the bot is running on
+:param name: The text to prepend to the window title</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.teleport_to">
 <em class="property">async </em><code class="sig-name descname">teleport_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">location</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#wizsdk.utils.XYZYaw" title="wizsdk.utils.XYZYaw">wizsdk.utils.XYZYaw</a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.teleport_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>Teleports to XYZYaw location
 Will return immediately if player movement is locked
-Requires the <cite>player_struct</cite> hook to be activated</p>
+Requires the <code class="docutils literal notranslate"><span class="pre">player_struct</span></code> hook to be activated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>location</strong> (<a class="reference internal" href="#wizsdk.utils.XYZYaw" title="wizsdk.utils.XYZYaw"><em>XYZYaw</em></a>) – location to move to</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.teleport_to_friend">
-<em class="property">async </em><code class="sig-name descname">teleport_to_friend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">match_img</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.teleport_to_friend" title="Permalink to this definition">¶</a></dt>
+<em class="property">async </em><code class="sig-name descname">teleport_to_friend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">match_img</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#wizsdk.client.Client.teleport_to_friend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Completes a set of actions to teleport to a friend.
-The friend must have the proper symbol next to it
-symbol must match the image passed as ‘match_img’</p>
+The friend must have the proper symbol next to it.
+The symbol must match the image passed as ‘match_img’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>match_img</strong> – A string of the image file name, or a list of bytes returned by <code class="docutils literal notranslate"><span class="pre">Client.get_image</span></code>
+The friend icon to find to select which friend to teleport to.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.unregister">
 <em class="property">async </em><code class="sig-name descname">unregister</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.unregister" title="Permalink to this definition">¶</a></dt>
-<dd><p>Properly unregister hooks and more</p>
+<dd><p>Properly unregister hooks and clean up possible ongoing asyncio tasks</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.use_potion_if_needed">
 <em class="property">async </em><code class="sig-name descname">use_potion_if_needed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">health</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">mana</span><span class="o">=</span><span class="default_value">20</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.use_potion_if_needed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Clicks on a potion if health or mana values drop below the settings
+:param health: Health value threshold. Potion will be used if health value drops below
+:param mana: Mana value threshold. Potion will be used if mana value drops below</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.wait">
-<em class="property">async </em><code class="sig-name descname">wait</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.wait" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for asyncio.sleep() that return self for function chaining</p>
+<em class="property">async </em><code class="sig-name descname">wait</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seconds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.wait" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for asyncio.sleep()
+:param seconds: number of seconds to “sleep”</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.client.Client.walk_to">
-<em class="property">async </em><code class="sig-name descname">walk_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">location</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.walk_to" title="Permalink to this definition">¶</a></dt>
+<em class="property">async </em><code class="sig-name descname">walk_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">location</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#wizsdk.utils.XYZYaw" title="wizsdk.utils.XYZYaw">wizsdk.utils.XYZYaw</a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.Client.walk_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>Walks to XYZYaw location in a <strong>straight</strong> line only.
 Will _not_ work if there are obstacles in the way. Ideal for short distances
 Will return immediately if player movement is locked
-Requires the <cite>player_struct</cite> hook to be activated</p>
+Requires the <cite>player_struct</cite> hook to be activated.
+NOTE: The distance will not be accurate if the player has a mount equipped.
+:param location: The location to walk to.</p>
+<blockquote>
+<div><p>(Only the x and y value will actually be used)</p>
+</div></blockquote>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt id="wizsdk.client.register_clients">
-<code class="sig-prename descclassname">wizsdk.client.</code><code class="sig-name descname">register_clients</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_handles_expected</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">names</span><span class="p">:</span> <span class="n">list</span> <span class="o">=</span> <span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">confirm_position</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.client.register_clients" title="Permalink to this definition">¶</a></dt>
-<dd><p>n_handles_expected: the expected # of wiz windows opened. Use -1 for undetermined
-names: A list of strings that will serve as the names of the windows</p>
+<code class="sig-prename descclassname">wizsdk.client.</code><code class="sig-name descname">register_clients</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_handles_expected</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">names</span><span class="p">:</span> <span class="n">list</span> <span class="o">=</span> <span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">confirm_position</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#wizsdk.client.register_clients" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register multiple clients, sorted from left to right, top to bottom.
+:param n_handles_expected: the expected # of wiz windows opened. Use -1 for undetermined
+:type n_handles_expected: int
+:param names: A list of strings that will serve as the names of the windows
+:type names: list
+:param confirm_position: prompt the user to confirm the windows order before continuing
+:type confirm_position: bool</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list populated with <code class="docutils literal notranslate"><span class="pre">Client</span></code> instances</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>client_list (list)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -480,6 +600,8 @@ names: A list of strings that will serve as the names of the windows</p>
 <dt id="wizsdk.keyboard.Keyboard">
 <em class="property">class </em><code class="sig-prename descclassname">wizsdk.keyboard.</code><code class="sig-name descname">Keyboard</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">window_handle</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.keyboard.Keyboard" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">wizwalker.windows.input.InputHandler</span></code></p>
+<p>Keyboard class.
+Inherits <code class="docutils literal notranslate"><span class="pre">hold_key</span></code> from <code class="docutils literal notranslate"><span class="pre">wizwalker.InputHandler</span></code></p>
 <dl class="py method">
 <dt id="wizsdk.keyboard.Keyboard.type_key">
 <code class="sig-name descname">type_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">char</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.keyboard.Keyboard.type_key" title="Permalink to this definition">¶</a></dt>
@@ -504,69 +626,14 @@ names: A list of strings that will serve as the names of the windows</p>
 <dt id="wizsdk.mouse.FailSafeException">
 <em class="property">exception </em><code class="sig-prename descclassname">wizsdk.mouse.</code><code class="sig-name descname">FailSafeException</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span><span class="o">=</span><span class="default_value">'Mouse fail-safe triggered from mouse moving to a corner of the screen.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.mouse.FailSafeException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised when the mouse is over (0, 0). Protactive measure to regain control of your mouse.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="wizsdk.mouse.Mouse">
 <em class="property">class </em><code class="sig-prename descclassname">wizsdk.mouse.</code><code class="sig-name descname">Mouse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">window_handle</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.mouse.Mouse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#wizsdk.window.Window" title="wizsdk.window.Window"><code class="xref py py-class docutils literal notranslate"><span class="pre">wizsdk.window.Window</span></code></a></p>
-<p>It simulates the mouse
-Due to there being only 1 mouse, all methods are syncronous</p>
-<dl class="py attribute">
-<dt id="wizsdk.mouse.Mouse.MOUSEEVENTF_ABSOLUTE">
-<code class="sig-name descname">MOUSEEVENTF_ABSOLUTE</code><em class="property"> = 32768</em><a class="headerlink" href="#wizsdk.mouse.Mouse.MOUSEEVENTF_ABSOLUTE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="wizsdk.mouse.Mouse.MOUSEEVENTF_LEFTDOWN">
-<code class="sig-name descname">MOUSEEVENTF_LEFTDOWN</code><em class="property"> = 2</em><a class="headerlink" href="#wizsdk.mouse.Mouse.MOUSEEVENTF_LEFTDOWN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="wizsdk.mouse.Mouse.MOUSEEVENTF_LEFTUP">
-<code class="sig-name descname">MOUSEEVENTF_LEFTUP</code><em class="property"> = 4</em><a class="headerlink" href="#wizsdk.mouse.Mouse.MOUSEEVENTF_LEFTUP" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="wizsdk.mouse.Mouse.MOUSEEVENTF_MIDDLEDOWN">
-<code class="sig-name descname">MOUSEEVENTF_MIDDLEDOWN</code><em class="property"> = 32</em><a class="headerlink" href="#wizsdk.mouse.Mouse.MOUSEEVENTF_MIDDLEDOWN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="wizsdk.mouse.Mouse.MOUSEEVENTF_MIDDLEUP">
-<code class="sig-name descname">MOUSEEVENTF_MIDDLEUP</code><em class="property"> = 64</em><a class="headerlink" href="#wizsdk.mouse.Mouse.MOUSEEVENTF_MIDDLEUP" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="wizsdk.mouse.Mouse.MOUSEEVENTF_MOVE">
-<code class="sig-name descname">MOUSEEVENTF_MOVE</code><em class="property"> = 1</em><a class="headerlink" href="#wizsdk.mouse.Mouse.MOUSEEVENTF_MOVE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="wizsdk.mouse.Mouse.MOUSEEVENTF_RIGHTDOWN">
-<code class="sig-name descname">MOUSEEVENTF_RIGHTDOWN</code><em class="property"> = 8</em><a class="headerlink" href="#wizsdk.mouse.Mouse.MOUSEEVENTF_RIGHTDOWN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="wizsdk.mouse.Mouse.MOUSEEVENTF_RIGHTUP">
-<code class="sig-name descname">MOUSEEVENTF_RIGHTUP</code><em class="property"> = 16</em><a class="headerlink" href="#wizsdk.mouse.Mouse.MOUSEEVENTF_RIGHTUP" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="wizsdk.mouse.Mouse.MOUSEEVENTF_WHEEL">
-<code class="sig-name descname">MOUSEEVENTF_WHEEL</code><em class="property"> = 2048</em><a class="headerlink" href="#wizsdk.mouse.Mouse.MOUSEEVENTF_WHEEL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="wizsdk.mouse.Mouse.SM_CXSCREEN">
-<code class="sig-name descname">SM_CXSCREEN</code><em class="property"> = 0</em><a class="headerlink" href="#wizsdk.mouse.Mouse.SM_CXSCREEN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="wizsdk.mouse.Mouse.SM_CYSCREEN">
-<code class="sig-name descname">SM_CYSCREEN</code><em class="property"> = 1</em><a class="headerlink" href="#wizsdk.mouse.Mouse.SM_CYSCREEN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<p>Class for controlling the computer’s mouse.</p>
 <dl class="py method">
 <dt id="wizsdk.mouse.Mouse.click">
 <em class="property">async </em><code class="sig-name descname">click</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">button</span><span class="o">=</span><span class="default_value">'left'</span></em>, <em class="sig-param"><span class="n">duration</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">delay</span><span class="o">=</span><span class="default_value">0.1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.mouse.Mouse.click" title="Permalink to this definition">¶</a></dt>
@@ -739,7 +806,7 @@ Returns false if no match was found with the given threshold</p>
 
 <dl class="py data">
 <dt id="wizsdk.utils.user32">
-<code class="sig-prename descclassname">wizsdk.utils.</code><code class="sig-name descname">user32</code><em class="property"> = &lt;WinDLL 'user32', handle 7ffc15f40000&gt;</em><a class="headerlink" href="#wizsdk.utils.user32" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">wizsdk.utils.</code><code class="sig-name descname">user32</code><em class="property"> = &lt;WinDLL 'user32', handle 7ffbfd680000&gt;</em><a class="headerlink" href="#wizsdk.utils.user32" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used to store player location</p>
 </dd></dl>
 
