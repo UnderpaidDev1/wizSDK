@@ -2,10 +2,11 @@
 import asyncio
 
 # Custom imports
-from .mouse import Mouse
+from wizsdk.mouse import Mouse
 
 
 mouse = Mouse()
+Card = None
 
 
 class Card:
@@ -18,10 +19,13 @@ class Card:
     def __str__(self):
         return f"{self.name} at ({self.spell_x}, {self.spell_y})"
 
-    async def enchant(self, spell):
+    async def enchant(self, spell: Card) -> Card:
         """
-        Enchants `spell` with self
-        Returns enchanted spell
+        Enchants `spell` with self.
+        
+        Returns:
+            A new Card object representing the new enchanted spell
+        
         """
         self.client.log(f"Enchanting {spell.name} with {self.name}")
 
@@ -48,11 +52,17 @@ class Card:
 
     async def cast(self, target=None):
         """
-        Selects spell
-        if target is specified, select target (0-3 for enemies, 4-7 for allies)
-          0 1 2 3
-           -----   
-          7 6 5 4
+        Selects spell.
+        If target is specified, it clicks on target (0-3 for enemies, 4-7 for allies)
+        
+        .. code-block:: py
+        
+            0 1 2 3
+            -------
+            7 6 5 4
+        
+        Args:
+            target (int, optional): The target to select after clicking the spell
         """
         self.client.log(f"Casting {self.name}")
         await self.client.mouse.click(

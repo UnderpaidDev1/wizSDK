@@ -5,16 +5,21 @@ import asyncio
 
 user32 = ctypes.windll.user32
 
+XYZYaw = namedtuple("XYZYaw", "x y z yaw")
 """
 Used to store player location
+
+:meta private:
 """
-XYZYaw = namedtuple("XYZYaw", "x y z yaw")
 
 
-def get_all_wiz_handles():
+def get_all_wiz_handles() -> list:
     """
     Retrieves all window handles for windows that have the 
     'Wizard Graphical Client' class
+    
+    Returns:
+        List of all the wizard101 device handles
     """
     target_class = "Wizard Graphical Client"
 
@@ -54,9 +59,12 @@ def get_all_wiz_handles():
     return handles
 
 
-def count_wiz_clients():
+def count_wiz_clients() -> int:
     """
     Returns the number of wizard101 clients detected
+    
+    Returns:
+        Number of wizard101 clients detected
     """
     return len(get_all_wiz_handles())
 
@@ -68,8 +76,11 @@ async def finish_all_loading(*players):
     await asyncio.gather(*[player.finish_loading() for player in players])
 
 
-def packaged_img(filename):
+def packaged_img(filename: str):
     """
-    Helper function to reference images packaged with the WizSDK module
+    Helper function to reference images packaged within the WizSDK module
+    
+    Returns:
+        Full file path to the packaged image.
     """
     return os.path.dirname(__file__) + "/images/" + filename

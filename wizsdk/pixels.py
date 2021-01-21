@@ -45,6 +45,10 @@ class _BITMAP(ctypes.Structure):
 
 
 class DeviceContext(Window):
+    """
+    Base class for accessing the Window's Device Context (pixels, image captures, etc..)
+    """
+
     def __init__(self, handle):
         super().__init__(handle)
         self.window_handle = handle
@@ -188,7 +192,9 @@ def match_image(largeImg, smallImg, threshold=0.1, debug=False):
     """ 
     Finds smallImg in largeImg using template matching 
     Adjust threshold for the precision of the match (between 0 and 1, the lowest being more precise)
-    Returns false if no match was found with the given threshold
+    
+    Returns:
+        tuple (x, y) of the center of the match if it's found, False otherwise.
     """
 
     method = cv2.TM_SQDIFF_NORMED

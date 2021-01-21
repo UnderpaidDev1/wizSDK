@@ -10,7 +10,7 @@ Welcome to WizSDK's documentation!
    :maxdepth: 2
    :caption: Contents:
    
-   api
+   wizsdk
 
 
 Indices and tables

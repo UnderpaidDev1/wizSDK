@@ -1,10 +1,16 @@
-from .client import Client, unregister_all, XYZYaw, register_clients
-from .utils import get_all_wiz_handles, count_wiz_clients, finish_all_loading
+from .client import Client, unregister_all, register_clients
+from .utils import (
+    get_all_wiz_handles,
+    count_wiz_clients,
+    finish_all_loading,
+    XYZYaw,
+)
 from .card import Card
 from .battle import Battle
 from .mouse import Mouse
+from .window import Window
 from .keyboard import Keyboard
-from .pixels import match_image
+from .pixels import DeviceContext, match_image
 
 # Clean up on exit
 import ctypes

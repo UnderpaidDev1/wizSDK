@@ -152,8 +152,9 @@ class Battle(DeviceContext):
         if self.is_idle():
             self.log("Battle has finished")
 
-            # Update player health and mana
-            if p1.walker._memory.is_hook_active("player_struct"):
+            # A bit of a hack to see if the player hook is active
+            if self.client.walker._memory.is_hook_active("player_struct"):
+                # Update player health and mana
                 await self.client.get_mana()
                 await self.client.get_health()
 
