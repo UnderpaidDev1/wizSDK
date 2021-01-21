@@ -20,7 +20,10 @@ from .battle import Battle
 from .card import Card
 
 SPELLS_FOLDER = "spells"
+""" Default folder to look for spells in"""
+
 DEFAULT_MOUNT_SPEED = 1.4
+""" Default mount speed (40%) """
 
 user32 = ctypes.windll.user32
 __DIRNAME__ = os.path.dirname(__file__)
@@ -28,6 +31,9 @@ all_clients = []
 
 
 async def unregister_all():
+    """
+    Properly unregisters all clients
+    """
     print("Un-hooking all registered clients")
     for client in all_clients:
         await client.unregister()
@@ -39,9 +45,12 @@ class Client(DeviceContext, Keyboard, Window):
     
     Example:
         .. code-block:: py
+        
             # registers a new client
             player = client.register(name="My Bot")
             await player.activate_hooks()
+            
+    
     """
 
     def __init__(self, handle=None):
@@ -57,6 +66,9 @@ class Client(DeviceContext, Keyboard, Window):
 
         self.walker = None
         self.mouse = Mouse(handle)
+
+        self._last_health = 99_999
+        self._last_mana = 99_999
 
     @classmethod
     def register(cls, nth=0, name=None, handle=None):
@@ -108,6 +120,7 @@ class Client(DeviceContext, Keyboard, Window):
         
         Examples:
             .. code-block:: py
+            
                 # activates player_struct and player_stat_struct
                 await activate_hooks("player_struct", "player_stat_struct")
                 
@@ -115,6 +128,8 @@ class Client(DeviceContext, Keyboard, Window):
                 await activate_hooks()
         """
         await self.walker.activate_hooks(*hook_names)
+        await self.send_key("d")
+        await self.send_key("a")
 
     def set_name(self, name: str):
         """
@@ -172,47 +187,57 @@ class Client(DeviceContext, Keyboard, Window):
 
     async def get_health(self) -> int:
         """
-        Get's health value from memory. Triggers the player_stat_hook if needed.
+        Gets health value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
         
         Returns:
             The health value of the player as an int
         """
-        refresh_triggered = False
-        mem_health = await self.walker.health()
-        while (not mem_health) or (mem_health < 0) or (mem_health > 20_000):
-            # print(mem_health)
-            if not refresh_triggered:
-                # Open and close character page to force memory update
-                self.log("Refreshing health value")
-                await self.send_key("C", 0.1)
-                await self.wait(0.8)
-                await self.send_key("C", 0.1)
-                refresh_triggered = True
-            await self.wait(0.2)
-            mem_health = await self.walker.health()
+        # refresh_triggered = False
+        # mem_health = await self.walker.health()
+        # while (not mem_health) or (mem_health < 0) or (mem_health > 20_000):
+        #     # print(mem_health)
+        #     if not refresh_triggered:
+        #         # Open and close character page to force memory update
+        #         self.log("Refreshing health value")
+        #         await self.send_key("C", 0.1)
+        #         await self.wait(0.8)
+        #         await self.send_key("C", 0.1)
+        #         refresh_triggered = True
+        #     await self.wait(0.2)
+        #     mem_health = await self.walker.health()
 
-        return int(mem_health)
+        # return int(mem_health)
+        mem_health = await self.walker.health()
+        if (mem_health) and (mem_health >= 0) and (mem_health < 20_000):
+            self._last_health = mem_health
+
+        return self._last_health
 
     async def get_mana(self) -> int:
         """
-        Get's mana value from memory. Triggers the player_stat_hook if needed.
+        Gets mana value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
         
         Returns:
             The mana value of the player as an int
         """
-        refresh_triggered = False
-        mem_mana = await self.walker.mana()
-        while (not mem_mana) or (mem_mana < 0) or (mem_mana > 2_000):
-            if not refresh_triggered:
-                self.log("Refreshing mana value")
-                # Open and close character page to force memory update
-                await self.send_key("C", 0.1)
-                await self.send_key("C", 0.1)
-                refresh_triggered = True
-            await self.wait(0.2)
-            mem_mana = await self.walker.mana()
+        # refresh_triggered = False
+        # mem_mana = await self.walker.mana()
+        # while (not mem_mana) or (mem_mana < 0) or (mem_mana > 20_000):
+        #     if not refresh_triggered:
+        #         self.log("Refreshing mana value")
+        #         # Open and close character page to force memory update
+        #         await self.send_key("C", 0.1)
+        #         await self.send_key("C", 0.1)
+        #         refresh_triggered = True
+        #     await self.wait(0.2)
+        #     mem_mana = await self.walker.mana()
 
-        return int(mem_mana)
+        # return int(mem_mana)
+        mem_mana = await self.walker.mana()
+        if (mem_mana) and (mem_mana >= 0) and (mem_mana < 20_000):
+            self._last_mana = mem_mana
+
+        return self._last_mana
 
     def is_crown_shop(self) -> bool:
         """
@@ -231,12 +256,16 @@ class Client(DeviceContext, Keyboard, Window):
             bool: True if the player is idle / False otherwise
         """
         spellbook_yellow = self.pixel_matches_color(
-            (781, 551), (255, 251, 64), tolerance=40
+            (781, 551), (255, 251, 64), tolerance=30
         )
         spellbook_brown = self.pixel_matches_color(
-            (728, 587), (79, 29, 29), tolerance=40
+            (728, 587), (79, 29, 29), tolerance=30
         )
-        return spellbook_brown and spellbook_yellow
+
+        spellbook_gray = self.pixel_matches_color(
+            (747, 538), (27, 47, 63), tolerance=30
+        )
+        return spellbook_brown and spellbook_yellow and spellbook_gray
 
     def is_dialog_more(self):
         """
@@ -321,6 +350,8 @@ class Client(DeviceContext, Keyboard, Window):
         """
         h = await self.get_health()
         m = await self.get_mana()
+
+        print(h, m)
 
         mana_low = m < mana
         health_low = h < health
@@ -566,7 +597,7 @@ class Client(DeviceContext, Keyboard, Window):
         """
         return Battle(self, name)
 
-    async def find_spell(self, spell_name: str, threshold: float = 0.1) -> Card:
+    async def find_spell(self, spell_name: str, threshold: float = 0.12) -> Card:
         """
         Searches spell area for an image matching ``spell_name``
         
@@ -581,8 +612,8 @@ class Client(DeviceContext, Keyboard, Window):
         if not self.is_active():
             self.set_active()
             await self.mouse.move_to(100, 100, duration=0.2)
-        # Move mouse out of area to get a clear image
         else:
+            # Move mouse out of area to get a clear image
             await self.mouse.move_out(self._spell_area)
 
         # Get screenshot of `spell_area`
