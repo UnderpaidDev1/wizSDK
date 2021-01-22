@@ -332,6 +332,39 @@ class Client(DeviceContext, Keyboard, Window):
 
         return found
 
+    async def get_backpack_space_left(self) -> optional[int]:
+        """
+        Gets the backpack space left. Will try to refresh the value by quickly opening and closing the backpack if necessary. Returns None if it wasn't able to get the value.
+        
+        Returns:
+            space left in the backpack, None if it's not able to get the value.
+        """
+
+        refresh_triggered = False
+        time_awaited = 0
+        interval = 0.1
+        space_used = await self.walker.backpack_space_used()
+        while space_used == None and time_awaited < 1 and self.is_idle():
+            if not refresh_triggered:
+                self.log("Refreshing backpack space value")
+                # Open and close character page to force memory update
+                await self.send_key("b")
+                await self.send_key("b")
+                refresh_triggered = True
+
+            # Wait
+            await self.wait(interval)
+            time_awaited += interval
+
+            # re-try accessing the values
+            space_used = await self.walker.backpack_space_used()
+
+        if space_used == None:
+            return None
+
+        space_total = await self.walker.backpack_space_total()
+        return space_total - space_used
+
     """
     ACTIONS BASED ON STATES
     """
