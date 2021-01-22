@@ -129,11 +129,11 @@ class Battle(DeviceContext):
         self.enemy_first = self._is_enemy_first()
         self._going_first = not self.enemy_first
 
-        self.log("Battle is starting")
-        if self.enemy_first:
-            self.log("Enemy is going first")
-        else:
-            self.log("You are going first")
+        who_is = "Enemy is" if self.enemy_first else "You are"
+
+        self.log(">> Battle is starting")
+        self.log("======================================")
+        self.log(f"{who_is} going first")
 
         self.print_round()
 
