@@ -299,14 +299,6 @@ security = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)"]
 socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
 
 [[package]]
-name = "simple-chalk"
-version = "0.1.0"
-description = "A terminal string styling library"
-category = "main"
-optional = false
-python-versions = ">=3.6"
-
-[[package]]
 name = "six"
 version = "1.15.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -488,7 +480,7 @@ pymem = "1.3"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "097a5936d06ee5b8041b95ba6442cc21fdda0614533561cd6e656e27ac6a3c76"
+content-hash = "238a4b3c3573c0960250148a6e5e6ef92d8e84bacce5d9955bf02b5a92d89c5e"
 
 [metadata.files]
 aioconsole = [
@@ -684,9 +676,6 @@ pytz = [
 requests = [
     {file = "requests-2.25.1-py2.py3-none-any.whl", hash = "sha256:c210084e36a42ae6b9219e00e48287def368a26d03a048ddad7bfee44f75871e"},
     {file = "requests-2.25.1.tar.gz", hash = "sha256:27973dd4a904a4f13b263a19c866c13b92a39ed1c964655f025f3f8d3d75b804"},
-]
-simple-chalk = [
-    {file = "simple_chalk-0.1.0.tar.gz", hash = "sha256:d80f55993dfa040c1b55d2fbfb925e4fbb5798c2934601aa448ef4a192d84196"},
 ]
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},

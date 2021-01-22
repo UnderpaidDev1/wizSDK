@@ -1,11 +1,9 @@
-# In development
-
 # WizSDK
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Wizard101 bot Software Development Kit
-A wrapper for [WizWalker](https://pypi.org/project/wizwalker/) bundled with many other useful function.
+A wrapper for [WizWalker](https://github.com/StarrFox/wizwalker) bundled with many other useful function.
 Designed to make building bots for farming / questing / bazaar sniping / selling / pet training
 
 ## documentation
