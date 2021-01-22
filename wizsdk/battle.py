@@ -1,9 +1,10 @@
 # Native imports
 import sys
+from contextlib import suppress
 
 # Third-party imports
 import asyncio
-from simple_chalk import chalk
+from wizwalker import HookNotActive
 
 # Custom imports
 from .pixels import DeviceContext, match_image
@@ -97,7 +98,7 @@ class Battle(DeviceContext):
         if self.logging:
             s = ""
             if self.name != None:
-                s += chalk.blueBright(f"[{self.name}] ")
+                s += f"[{self.name}] "
             s += message
             print(s)
             sys.stdout.flush()
@@ -128,7 +129,7 @@ class Battle(DeviceContext):
         self.enemy_first = self._is_enemy_first()
         self._going_first = not self.enemy_first
 
-        self.log("Battle is _starting")
+        self.log("Battle is starting")
         if self.enemy_first:
             self.log("Enemy is going first")
         else:
@@ -152,9 +153,7 @@ class Battle(DeviceContext):
         if self.is_idle():
             self.log("Battle has finished")
 
-            # A bit of a hack to see if the player hook is active
-            if self.client.walker._memory.is_hook_active("player_struct"):
-                # Update player health and mana
+            with suppress(HookNotActive):
                 await self.client.get_mana()
                 await self.client.get_health()
 
@@ -167,18 +166,33 @@ class Battle(DeviceContext):
 
     def get_enemy_positions(self):
         """
-        Returns a list of length 4 with 0, if no enemy is present at the 
-        location, or 1 if an enemy is present
+        Gets the indices of the enemies present
+        
+        Examples:
+            .. code-block:: py
+            
+                # Register
+                player = client.register(name="test")
+                # Get the battle
+                battle = player.get_battle()
+                while await battle.loop():
+                    enemies = battle.get_enemy_positions() # -> [0, 1]
+                    print(len(enemies)) # -> 2
+                    # Get the position of the first enemy in battle
+                    first_enemy = enemies[0] # -> 0
+                    # Get spell
+                    firecat = await player.find_spell('firecat') # -> Card
+                    if firecat:
+                        # Cast at enemy position
+                        await firecat.cast(target=first_enemy)
         """
         Y = 75
         COLOR = (207, 186, 135)
         enemies = []
         for i in range(4):
             X = (174 * (i)) + 203
-            enemy_present = 0
             if self.pixel_matches_color((X, Y), COLOR, tolerance=30):
-                enemy_present = 1
-            enemies.append(enemy_present)
+                enemies.append(i)
 
         return enemies
 
@@ -186,7 +200,7 @@ class Battle(DeviceContext):
         """
         Returns the number enemies in the fight
         """
-        return sum(self.get_enemy_positions())
+        return len(self.get_enemy_positions())
 
     def find_enemy(self, enemy_image):
         """ 
