@@ -1,11 +1,12 @@
 # Native imports
 import ctypes
 import os, sys
+import asyncio
+from typing import Optional
 
 # Third-party imports
 import cv2
 import numpy
-import asyncio
 import wizwalker
 from wizwalker.utils import calculate_perfect_yaw
 
@@ -332,7 +333,7 @@ class Client(DeviceContext, Keyboard, Window):
 
         return found
 
-    async def get_backpack_space_left(self) -> optional[int]:
+    async def get_backpack_space_left(self) -> Optional[int]:
         """
         Gets the backpack space left. Will try to refresh the value by quickly opening and closing the backpack if necessary. Returns None if it wasn't able to get the value.
         
