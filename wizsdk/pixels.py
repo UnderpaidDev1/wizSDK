@@ -2,6 +2,7 @@
 import ctypes
 import ctypes.wintypes
 
+
 # Third-party imports
 import numpy as np
 import cv2
@@ -55,6 +56,7 @@ class DeviceContext(Window):
 
     def get_image(self, region=None):
         _, _, w, h = self.get_rect()
+
         x, y = 0, 0
 
         if region and len(region) == 4:
@@ -76,8 +78,22 @@ class DeviceContext(Window):
 
         bitmap = _BITMAP()
 
-        # Don't know what that does
-        gdi32.GetObjectA(mBM, ctypes.sizeof(_BITMAP), ctypes.byref(bitmap))
+        # Don't know what that does, but bitmap is filled here
+        bits_transfered = gdi32.GetObjectA(
+            mBM, ctypes.sizeof(_BITMAP), ctypes.byref(bitmap)
+        )
+
+        # TRY CATCHING AN ERROR :/
+        if bits_transfered == 0:
+            print("Error transfering bytes")
+            print(x, y, w, h)
+            print(mBM)
+            # Log to file
+            with open("errorlog.txt", "a") as f:
+                f.write("Error transfering bytes\r")
+                f.write(f"({x}, {y}, {w}, {h})\r")
+                f.write(f"({mBM})\r")
+            return self.get_image(region=region)
 
         bi = _BITMAPINFOHEADER()
         bi.biSize = ctypes.sizeof(_BITMAPINFOHEADER)
@@ -91,6 +107,8 @@ class DeviceContext(Window):
         bi.biYPelsPerMeter = 0
         bi.biClrUsed = 0
         bi.biClrImportant = 0
+
+        print(bitmap.bmBitsPixel)
 
         bitmap_size = (
             (
