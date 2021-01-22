@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                0.5.2
+                1.0.0
               </div>
             
           
@@ -669,8 +669,24 @@ returns 0, 1, 2, 3 if found otherwise returns False</p>
 <dl class="py method">
 <dt id="wizsdk.Battle.get_enemy_positions">
 <code class="sig-name descname">get_enemy_positions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Battle.get_enemy_positions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list of length 4 with 0, if no enemy is present at the
-location, or 1 if an enemy is present</p>
+<dd><p>Gets the indices of the enemies present</p>
+<p class="rubric">Examples</p>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="c1"># Register</span>
+<span class="n">player</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+<span class="c1"># Get the battle</span>
+<span class="n">battle</span> <span class="o">=</span> <span class="n">player</span><span class="o">.</span><span class="n">get_battle</span><span class="p">()</span>
+<span class="k">while</span> <span class="k">await</span> <span class="n">battle</span><span class="o">.</span><span class="n">loop</span><span class="p">():</span>
+    <span class="n">enemies</span> <span class="o">=</span> <span class="n">battle</span><span class="o">.</span><span class="n">get_enemy_positions</span><span class="p">()</span> <span class="c1"># -&gt; [0, 1]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">enemies</span><span class="p">))</span> <span class="c1"># -&gt; 2</span>
+    <span class="c1"># Get the position of the first enemy in battle</span>
+    <span class="n">first_enemy</span> <span class="o">=</span> <span class="n">enemies</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># -&gt; 0</span>
+    <span class="c1"># Get spell</span>
+    <span class="n">firecat</span> <span class="o">=</span> <span class="k">await</span> <span class="n">player</span><span class="o">.</span><span class="n">find_spell</span><span class="p">(</span><span class="s1">&#39;firecat&#39;</span><span class="p">)</span> <span class="c1"># -&gt; Card</span>
+    <span class="k">if</span> <span class="n">firecat</span><span class="p">:</span>
+        <span class="c1"># Cast at enemy position</span>
+        <span class="k">await</span> <span class="n">firecat</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">first_enemy</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
