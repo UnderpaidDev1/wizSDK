@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.0.2
               </div>
             
           
@@ -247,6 +247,17 @@
 <dd><p>Waits for player to have gone through the loading screen.
 It first waits until it detects the loading screen, then waits until the loading screen is gone.
 If this function is called too late and the player is already out of the loading screen, it will wait indefinitely.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.Client.get_backpack_space_left">
+<em class="property">async </em><code class="sig-name descname">get_backpack_space_left</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Optional<span class="p">[</span>int<span class="p">]</span><a class="headerlink" href="#wizsdk.Client.get_backpack_space_left" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the backpack space left. Will try to refresh the value by quickly opening and closing the backpack if necessary. Returns None if it wasn’t able to get the value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>space left in the backpack, None if it’s not able to get the value.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
