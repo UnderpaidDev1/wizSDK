@@ -8,7 +8,6 @@ import numpy
 import asyncio
 import wizwalker
 from wizwalker.utils import calculate_perfect_yaw
-from simple_chalk import chalk
 
 # Custom imports
 from .utils import get_all_wiz_handles, XYZYaw, packaged_img
@@ -149,7 +148,7 @@ class Client(DeviceContext, Keyboard, Window):
         if self.logging:
             s = ""
             if self.name != None:
-                s += chalk.magentaBright(f"[{self.name}] ")
+                s += f"[{self.name}] "
             s += message
             print(s)
             sys.stdout.flush()
@@ -350,8 +349,6 @@ class Client(DeviceContext, Keyboard, Window):
         """
         h = await self.get_health()
         m = await self.get_mana()
-
-        print(h, m)
 
         mana_low = m < mana
         health_low = h < health
