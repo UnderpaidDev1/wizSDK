@@ -678,6 +678,53 @@ class Client(DeviceContext, Keyboard, Window):
         await self.mouse.click(254, 398, duration=0.2, delay=0.5)
         await self.wait(0.5)
 
+    async def autocast(self, *spells: str, target=None):
+        """
+        Short-hand for ``find_spell`` followed ``cast_spell``. Finds and casts spells. If 2 spells are provided, it will enchant spell 2 with spell 1. If target is provided, it will click the target. If any of the spells are not found, this function exits with False.
+        
+        Args:
+            spells: provide up to 2 spell arguments
+            target (int, optional): the target to cast the spell on. See ``Card.cast``
+        
+        Returns (bool):
+            True if all spells were found, False otherwise
+            
+        Examples:
+            .. code-block:: py
+            
+                player = Client.register(name="Bot")
+                battle = p1.get_battle("Test")
+                # Loop
+                while await battle.loop():
+                    # The following are all correct ways of using `autocast`
+                    await p1.autocast("epic", "bat", target=0)
+                    await p1.autocast("epic", "tempest")
+                    await p1.autocast("storm-blade", target=4)
+        """
+
+        if len(spells) == 0:
+            print(f"Invalid call to `autocast`, expected 1-3 arguments, received none")
+            return
+
+        elif type(spells[-1]) == int:
+            # The 3rd argument becomes the target
+            target = spells[-1]
+            spells = spells[:-1]
+
+        found = [await self.find_spell(s) for s in spells[:2]]
+
+        # Return False if some spells weren't found
+        if sum([bool(c) for c in found]) != len(found):
+            return False
+
+        if len(found) == 2:
+            to_cast = await found[0].enchant(found[1])
+        else:
+            to_cast = found[0]
+
+        await to_cast.cast(target=target)
+        return True
+
 
 def register_clients(
     n_handles_expected: int, names: list = [], confirm_position: bool = False
