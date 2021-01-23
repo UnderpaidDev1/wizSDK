@@ -680,26 +680,26 @@ class Client(DeviceContext, Keyboard, Window):
 
     async def autocast(self, *spells: str, target=None):
         """
-        Short-hand for ``find_spell`` followed ``cast_spell``. Finds and casts spells. If 2 spells are provided, it will enchant spell 2 with spell 1. If target is provided, it will click the target. If any of the spells are not found, this function exits with False.
+        Short-hand for ``find_spell`` followed by ``cast_spell``. Finds and casts spells. If 2 spells are provided, it will enchant spell 2 with spell 1. If target is provided, it will click the target. If any of the spells are not found, this function exits with False.
         
         Args:
             spells: provide up to 2 spell arguments
             target (int, optional): the target to cast the spell on. See ``Card.cast``
         
-        Returns (bool):
+        Returns:
             True if all spells were found, False otherwise
             
         Examples:
             .. code-block:: py
             
                 player = Client.register(name="Bot")
-                battle = p1.get_battle("Test")
+                battle = player.get_battle("Test")
                 # Loop
                 while await battle.loop():
                     # The following are all correct ways of using `autocast`
-                    await p1.autocast("epic", "bat", target=0)
-                    await p1.autocast("epic", "tempest")
-                    await p1.autocast("storm-blade", target=4)
+                    await player.autocast("epic", "bat", target=0)
+                    await player.autocast("epic", "tempest")
+                    await player.autocast("storm-blade", target=4)
         """
 
         if len(spells) == 0:
