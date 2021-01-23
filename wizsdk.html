@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.0.2
+                1.1.0
               </div>
             
           
@@ -204,6 +204,35 @@
 
 <span class="c1"># activates all hooks</span>
 <span class="k">await</span> <span class="n">activate_hooks</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.Client.autocast">
+<em class="property">async </em><code class="sig-name descname">autocast</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">spells</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">target</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Client.autocast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Short-hand for <code class="docutils literal notranslate"><span class="pre">find_spell</span></code> followed <code class="docutils literal notranslate"><span class="pre">cast_spell</span></code>. Finds and casts spells. If 2 spells are provided, it will enchant spell 2 with spell 1. If target is provided, it will click the target. If any of the spells are not found, this function exits with False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spells</strong> – provide up to 2 spell arguments</p></li>
+<li><p><strong>target</strong> (<em>int</em><em>, </em><em>optional</em>) – the target to cast the spell on. See <code class="docutils literal notranslate"><span class="pre">Card.cast</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns (bool):</dt><dd><p>True if all spells were found, False otherwise</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="n">player</span> <span class="o">=</span> <span class="n">Client</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bot&quot;</span><span class="p">)</span>
+<span class="n">battle</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">get_battle</span><span class="p">(</span><span class="s2">&quot;Test&quot;</span><span class="p">)</span>
+<span class="c1"># Loop</span>
+<span class="k">while</span> <span class="k">await</span> <span class="n">battle</span><span class="o">.</span><span class="n">loop</span><span class="p">():</span>
+    <span class="c1"># The following are all correct ways of using `autocast`</span>
+    <span class="k">await</span> <span class="n">p1</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span><span class="s2">&quot;epic&quot;</span><span class="p">,</span> <span class="s2">&quot;bat&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">p1</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span><span class="s2">&quot;epic&quot;</span><span class="p">,</span> <span class="s2">&quot;tempest&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">p1</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span><span class="s2">&quot;storm-blade&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
