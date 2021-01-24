@@ -628,13 +628,16 @@ class Client(DeviceContext, Keyboard, Window):
         """
         return Battle(self, name)
 
-    async def find_spell(self, spell_name: str, threshold: float = 0.12) -> Card:
+    async def find_spell(
+        self, spell_name: str, threshold: float = 0.12, ignore_gray_detection=False
+    ) -> Card:
         """
-        Searches spell area for an image matching ``spell_name``
+        Searches spell area for an image matching ``spell_name``. An additional check to see if the spell is grayed out is done by default.
         
         Args:
             spell_name (str): The name of the spell as you have it saved in your spells image folder.
             threshold (float): How precise the match should be. The lower this value, the more exact the match will be.
+            ignore_gray_detection (bool): should the gray detection be ignored. defaults to False
         
         Returns:
             int: x positions of spell if found, None otherwise
@@ -667,6 +670,19 @@ class Client(DeviceContext, Keyboard, Window):
             adjusted_x = round(x / 26) * 26
 
             spell_pos = offset_x + adjusted_x
+
+            if not ignore_gray_detection:
+                # Check if the card is grayed out
+                grayness = self.is_gray_rect(
+                    (spell_pos - 10, 310, 20, 20), threshold=25
+                )
+                # print(file_name, grayness)
+                if grayness < 25:
+                    if grayness > 20:
+                        print(f"{file_name} was found, but gray was detected.")
+                        print("If this is an error, contact wizSDK dev.")
+                    return None
+
             return Card(self, spell_name, spell_pos)
         else:
             return None

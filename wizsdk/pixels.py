@@ -32,6 +32,9 @@ class _BITMAPINFOHEADER(ctypes.Structure):
     ]
 
 
+least_gray = 0
+
+
 class _BITMAP(ctypes.Structure):
     _fields_ = [
         ("bmType", ctypes.c_long),
@@ -155,6 +158,34 @@ class DeviceContext(Window):
             assert (
                 False
             ), f"Color mode was expected to be length 3 (RGB), but pixel is length {len(pix)} and expected_RGB is length { len(expected_rgb)}"
+
+    def is_gray_rect(self, region, threshold=25):
+        # global least_gray
+        least_gray = 0
+
+        w, h = region[2:]
+        img = self.get_image(region)
+
+        gray = True
+
+        # Check if all pixels in image are gray
+        for x in range(h):
+            if not gray:
+                break
+
+            for y in range(w):
+                pixel = img[x][y]
+
+                # Determine if a pixel is gray enough
+                color = abs(int(min(*pixel)) - int(max(*pixel)))
+                if color > least_gray:
+                    least_gray = color
+
+                if color > threshold:
+                    gray = False
+                    break
+
+        return least_gray
 
     def locate_on_screen(self, match_img, region=None, threshold=0.1, debug=False):
         """
