@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.1.1
+                1.2.0
               </div>
             
           
@@ -251,13 +251,14 @@
 
 <dl class="py method">
 <dt id="wizsdk.Client.find_spell">
-<em class="property">async </em><code class="sig-name descname">find_spell</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spell_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.12</span></em><span class="sig-paren">)</span> &#x2192; wizsdk.card.Card<a class="headerlink" href="#wizsdk.Client.find_spell" title="Permalink to this definition">¶</a></dt>
-<dd><p>Searches spell area for an image matching <code class="docutils literal notranslate"><span class="pre">spell_name</span></code></p>
+<em class="property">async </em><code class="sig-name descname">find_spell</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spell_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.12</span></em>, <em class="sig-param"><span class="n">ignore_gray_detection</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; wizsdk.card.Card<a class="headerlink" href="#wizsdk.Client.find_spell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches spell area for an image matching <code class="docutils literal notranslate"><span class="pre">spell_name</span></code>. An additional check to see if the spell is grayed out is done by default.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>spell_name</strong> (<em>str</em>) – The name of the spell as you have it saved in your spells image folder.</p></li>
 <li><p><strong>threshold</strong> (<em>float</em>) – How precise the match should be. The lower this value, the more exact the match will be.</p></li>
+<li><p><strong>ignore_gray_detection</strong> (<em>bool</em>) – should the gray detection be ignored. defaults to False</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -950,6 +951,11 @@ If the mouse is already outside, return</p>
 <dl class="py method">
 <dt id="wizsdk.DeviceContext.get_pixel">
 <code class="sig-name descname">get_pixel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.DeviceContext.get_pixel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.DeviceContext.is_gray_rect">
+<code class="sig-name descname">is_gray_rect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">region</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">25</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.DeviceContext.is_gray_rect" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
