@@ -401,13 +401,13 @@ class Client(DeviceContext, Keyboard, Window):
         """
         self.log("Awaiting loading")
 
-        player_struct = self.walker._memory.process.read_int(
+        base_addr = lambda: self.walker._memory.process.read_int(
             self.walker._memory.player_struct_addr
         )
+        player_struct = base_addr()
 
-        while player_struct == self.walker._memory.process.read_int(
-            self.walker._memory.player_struct_addr
-        ):
+        # Wait for base_addr to change
+        while player_struct == base_addr():
             await asyncio.sleep(0.2)
 
         await asyncio.sleep(1.5)
