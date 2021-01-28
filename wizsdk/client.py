@@ -397,15 +397,14 @@ class Client(DeviceContext, Keyboard, Window):
     async def finish_loading(self):
         """
         Waits for player to have gone through the loading screen.
-        It first waits until it detects the loading screen, then waits until the loading screen is gone. 
         If this function is called too late and the player is already out of the loading screen, it will wait indefinitely.
         """
         self.log("Awaiting loading")
-        while self.is_idle():
+        
+        player_struct = self.walker.process.read_int(self.walker.player_struct_addr)
+        
+        while player_struct == self.walker.process.read_int(self.walker.player_struct_addr):
             await asyncio.sleep(0.2)
-
-        while not (self.is_idle() or self.is_crown_shop()):
-            await asyncio.sleep(0.5)
 
         await asyncio.sleep(1)
 
