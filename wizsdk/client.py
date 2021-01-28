@@ -400,13 +400,17 @@ class Client(DeviceContext, Keyboard, Window):
         If this function is called too late and the player is already out of the loading screen, it will wait indefinitely.
         """
         self.log("Awaiting loading")
-        
-        player_struct = self.walker.process.read_int(self.walker.player_struct_addr)
-        
-        while player_struct == self.walker.process.read_int(self.walker.player_struct_addr):
+
+        player_struct = self.walker._memory.process.read_int(
+            self.walker._memory.player_struct_addr
+        )
+
+        while player_struct == self.walker._memory.process.read_int(
+            self.walker._memory.player_struct_addr
+        ):
             await asyncio.sleep(0.2)
 
-        await asyncio.sleep(1)
+        await asyncio.sleep(1.5)
 
     async def go_through_dialog(self, times=1):
         # Wait for press X, or more/done button
