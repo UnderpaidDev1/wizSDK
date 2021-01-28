@@ -787,7 +787,8 @@ def register_clients(
 
         # Set names
         for i in range(len(w)):
-            w[i].set_name(names[i])
+            if i < len(names):
+                w[i].set_name(names[i])
 
         # Confirm position
         if confirm_position:
