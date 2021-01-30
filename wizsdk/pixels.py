@@ -57,6 +57,16 @@ class DeviceContext(Window):
         self.window_handle = handle
 
     def get_image(self, region=None):
+        """
+        returns a byte array with the pixel data of the ``region`` from the ``window_handle`` window. ``region`` is relative to the ``window_handle`` window. If no ``region`` is specified, it will capture the entire window. If no ``window_handle`` is provided on initiation, monitor 1 is used as the context.
+        
+        Args:
+            region: (x, y, width, height) tuple relative to the ``window_handle`` context. Defaults to None
+            
+        Returns:
+            A 2d numpy array representing the pixel data of the captured region.
+        """
+
         _, _, w, h = self.get_rect()
         x, y = 0, 0
 
@@ -129,7 +139,17 @@ class DeviceContext(Window):
         img = img[:, :, :3]
         return img
 
-    def get_pixel(self, x, y):
+    def get_pixel(self, x, y) -> tuple:
+        """
+        Returns the (red, green, blue) channel's of the pixel at ``x``, ``y`` relative to the ``window_handle`` context.
+        
+        Args:
+            x
+            y
+        
+        Returns:
+            (r, g, b) tuple
+        """
         hDC = user32.GetWindowDC(self.window_handle)
         rgb = gdi32.GetPixel(hDC, x, y)
         user32.ReleaseDC(self.window_handle, hDC)
@@ -138,13 +158,23 @@ class DeviceContext(Window):
         b = (rgb >> 16) & 0xFF
         return (r, g, b)
 
-    def screenshot(self, name, region=None):
+    def screenshot(self, filename, region=None):
+        """
+        captures a screenshot of the provided ``region``, saves it to file as ``filename``.
+        
+        Args:
+            filename: what to save to image as
+            region: (x, y, width, height) tuple relative to the ``window_handle`` context. Defaults to None
+        """
         image = self.get_image(region=region)
         cv2.imshow("mat", image)
         cv2.waitKey(0)
-        cv2.imwrite(name, image)
+        cv2.imwrite(filename, image)
 
     def pixel_matches_color(self, xy, expected_rgb, tolerance=0):
+        """
+        gets the value of a pixel with ``get_pixel`` and checks it against ``expected_rgb``. Accepts ``tolerance`` amount of differences between the pixel and its expected value.
+        """
         pixel = self.get_pixel(*xy)
         if len(pixel) == 3 or len(expected_rgb) == 3:  # RGB mode
             r, g, b = pixel[:3]
@@ -160,6 +190,16 @@ class DeviceContext(Window):
             ), f"Color mode was expected to be length 3 (RGB), but pixel is length {len(pix)} and expected_RGB is length { len(expected_rgb)}"
 
     def is_gray_rect(self, region, threshold=25):
+        """
+        calculates if a ``(x, y, width, height)`` ``region`` is gray by iterating through all its pixels and calculating the difference between the channel with the lowest value, and the one with the highest value. Stops iterating if that value is greater than ``threshold``. Returns the highest of the values calculated.
+        
+        Args:
+            region: (x, y, width, height) tuple relative to the ``window_handle`` context.
+            threshold: difference allowed between highest channel and lowest channel to still be considered gray.
+            
+        Returns:
+            the greatest difference between the highest channel and lowest channel.
+        """
         # global least_gray
         least_gray = 0
 
@@ -190,11 +230,19 @@ class DeviceContext(Window):
     def locate_on_screen(self, match_img, region=None, threshold=0.1, debug=False):
         """
         Attempts to locate `match_img` in the Wizard101 window.
-        Returns (x, y) tuple for center of match if found. False otherwise.
         pass a rect tuple `(x, y, width, height)` as the `region` argument to narrow 
         down the area to look for the image.
         Adjust `threshold` for the precision of the match (between 0 and 1, the lowest being more precise).
         Set `debug` to True for extra debug info
+        
+        Args:
+            match_img: to image to locate, can be a file name or a numpy array
+            region: (x, y, width, height) tuple relative to the ``window_handle`` context. Defaults to None
+            theshold: precision of the match -- between 0 and 1, the lowest being more precise
+            debug: set to True to show a pop up of the area that matched the image provided.
+            
+        Returns:
+            (x, y) tuple for center of match if found. False otherwise.
         
         """
         match = match_image(
