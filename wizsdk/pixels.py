@@ -86,7 +86,7 @@ class DeviceContext(Window):
         # Account for the ZeroDevision error
         if bits_transfered == 0:
             # Reccurse until bits_transfered != 0.
-            return self.match_image(region)
+            return self.get_image(region)
 
         bi = _BITMAPINFOHEADER()
         bi.biSize = ctypes.sizeof(_BITMAPINFOHEADER)
