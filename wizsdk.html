@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.3.0
+                1.3.1
               </div>
             
           
@@ -1172,8 +1172,9 @@ Set <cite>debug</cite> to True for extra debug info</p>
 <dt id="wizsdk.HotkeyEvents.unset_hotkey">
 <code class="sig-name descname">unset_hotkey</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trigger</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.HotkeyEvents.unset_hotkey" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes a previously set hotkey</p>
-<dl class="simple">
-<dt>Args</dt><dd><p>trigger: the same trigger used to register the hotkey</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>trigger</strong> – the same trigger used to register the hotkey</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1264,11 +1265,8 @@ Set <cite>debug</cite> to True for extra debug info</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>coroutines</strong> – any amount of coroutines to run at the same time</p></li>
-<li><p><strong>return_when</strong> (<em>str</em>) – FIRST_COMPLETED, ALL_COMPLETED, or FIRST_EXCEPTION</p></li>
+<li><p><strong>return_when</strong> – when to stop the threads and return: asyncio.FIRST_COMPLETED, asyncio.ALL_COMPLETED, or asyncio.FIRST_EXCEPTION</p></li>
 </ul>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>ValueError</strong> – <cite>return_when</cite> argument is invalid</p>
 </dd>
 </dl>
 </dd></dl>
