@@ -13,27 +13,18 @@ Used to store player location
 """
 
 
-def run_threads(*coroutines, return_when="FIRST_COMPLETED"):
+def run_threads(*coroutines, return_when=asyncio.FIRST_COMPLETED):
     """
     creates an asyncio event loop to run coroutines concurrently
     
     Args:
         coroutines: any amount of coroutines to run at the same time
-        return_when (str): FIRST_COMPLETED, ALL_COMPLETED, or FIRST_EXCEPTION
-    
-    Raises:
-        ValueError: `return_when` argument is invalid
+        return_when: when to stop the threads and return: asyncio.FIRST_COMPLETED, asyncio.ALL_COMPLETED, or asyncio.FIRST_EXCEPTION
+
     """
 
-    if return_when not in ("FIRST_COMPLETED", "ALL_COMPLETED", "FIRST_EXCEPTION"):
-        raise ValueError(
-            f"invalid value for `return_when` {return_when}. expected FIRST_COMPLETED, ALL_COMPLETED, or FIRST_EXCEPTION"
-        )
-
-    to_return = getattr(asyncio, return_when)
-
     loop = asyncio.get_event_loop()
-    job = asyncio.wait(coroutines, return_when=to_return)
+    job = asyncio.wait(coroutines, return_when=return_when)
 
     done, pending = loop.run_until_complete(job)
 

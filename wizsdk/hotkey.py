@@ -97,7 +97,7 @@ class HotkeyEvents:
         """
         Removes a previously set hotkey
         
-        Args
+        Args:
             trigger: the same trigger used to register the hotkey
         """
         self._actions.pop(self._str_to_keycodes(trigger), None)
