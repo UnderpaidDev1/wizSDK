@@ -18,6 +18,7 @@ keycode_map = {
     "CAPS LOCK": 20,
     "ESC": 27,
     "SPACEBAR": 32,
+    "SPACE": 32,
     "PAGE UP": 33,
     "PAGE DOWN": 34,
     "END": 35,
