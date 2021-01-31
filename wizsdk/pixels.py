@@ -1,6 +1,7 @@
 # Native imports
 import ctypes
 import ctypes.wintypes
+from os import path
 
 # Third-party imports
 import numpy as np
@@ -8,6 +9,7 @@ import cv2
 
 # Custom imports
 from .window import Window
+
 
 user32 = ctypes.WinDLL("user32.dll")
 gdi32 = ctypes.WinDLL("gdi32.dll")
@@ -227,7 +229,9 @@ class DeviceContext(Window):
 
         return least_gray
 
-    def locate_on_screen(self, match_img, region=None, threshold=0.1, debug=False):
+    def locate_on_screen(
+        self, match_img, region=None, *, threshold=0.1, debug=False, folder=None
+    ):
         """
         Attempts to locate `match_img` in the Wizard101 window.
         pass a rect tuple `(x, y, width, height)` as the `region` argument to narrow 
@@ -240,13 +244,19 @@ class DeviceContext(Window):
             region: (x, y, width, height) tuple relative to the ``window_handle`` context. Defaults to None
             theshold: precision of the match -- between 0 and 1, the lowest being more precise
             debug: set to True to show a pop up of the area that matched the image provided.
+            folder: folder to look in. Overrides ``IMAGE_FOLDER`` default
             
         Returns:
             (x, y) tuple for center of match if found. False otherwise.
         
         """
+        to_match = (
+            path.join(folder or self._default_image_folder or "/", match_img)
+            if type(match_img) == str
+            else match_img
+        )
         match = match_image(
-            self.get_image(region=region), match_img, threshold, debug=debug
+            self.get_image(region=region), to_match, threshold, debug=debug
         )
 
         if not match or not region:
@@ -262,8 +272,7 @@ def _to_cv2_img(data):
         # It's a file name
         # cv2.IMREAD_COLOR ignores alpha channel, loads only rgb
         img = cv2.imdecode(np.fromfile(data, dtype=np.uint8), cv2.IMREAD_COLOR)
-        if img is None:
-            print(f"Unable to find `{data}`")
+
         return img
 
     elif type(data) is np.ndarray:
@@ -291,7 +300,7 @@ def match_image(largeImg, smallImg, threshold=0.1, debug=False):
         print("Error: large_image or small_image is None")
         return False
 
-    w, h = small_image.shape[:-1]
+    h, w = small_image.shape[:-1]
 
     if debug:
         print("large_image:", large_image.shape)
@@ -334,5 +343,5 @@ def match_image(largeImg, smallImg, threshold=0.1, debug=False):
         cv2.waitKey(0)
 
     # Return coordinates to center of match
-    return (x + (w * 0.5), y + (h * 0.5))
+    return (x + (w // 2), y + (h // 2))
 
