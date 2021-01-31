@@ -73,12 +73,12 @@ class HotkeyEvents:
         
         """
         if type(trigger) != str:
-            print(f"Invalid trigger of type {type(trigger)}. Expecting type `str`")
-            return False
+            raise ValueError(
+                f"Invalid trigger of type {type(trigger)}. Expecting type `str`"
+            )
 
         if not callable(action):
-            print("Invalid param `action`. Param not callable")
-            return False
+            raise ValueError("Invalid param `action`. Param not callable")
 
         try:
 
