@@ -40,9 +40,11 @@ class Battle(DeviceContext):
                         await p1.pass_turn()
     """
 
-    def __init__(self, client, name=None):
+    def __init__(self, client, name=None, default_image_folder=""):
         super().__init__(client.window_handle)
         self.client = client
+        self._default_image_folder = default_image_folder
+
         self.logging = self.client.logging
         self.is_idle = self.client.is_idle
         self.name = name
@@ -207,9 +209,9 @@ class Battle(DeviceContext):
         Attemps to find the position of an enemy that matches the image provided 
         returns 0, 1, 2, 3 if found otherwise returns False
         """
-        enemy_area = self.get_image(region=self._enemy_area)
-
-        found = match_image(enemy_area, enemy_image, threshold=0.2)
+        found = self.locate_on_screen(
+            enemy_image, region=self._enemy_area, threshold=0.2
+        )
 
         if found:
             return round((found[0] - 60) / 170)
@@ -221,9 +223,8 @@ class Battle(DeviceContext):
         Attemps to find the position of an ally the matches the image provided 
         returns 4, 5, 6, 7 if found otherwise returns False
         """
-        ally_area = self.get_image(region=self._ally_area)
 
-        found = match_image(ally_area, ally_image, threshold=0.2)
+        found = self.locate_on_screen(ally_image, region=self._ally_area, threshold=0.2)
 
         if found:
             return 7 - round((found[0] - 100) / 170)
@@ -234,7 +235,10 @@ class Battle(DeviceContext):
         turn_arrow_region = (230, 240, 80, 60)
         return bool(
             self.client.locate_on_screen(
-                packaged_img("enemy-first.png"), region=turn_arrow_region, threshold=0.2
+                "enemy-first.png",
+                region=turn_arrow_region,
+                threshold=0.2,
+                folder=packaged_img(),
             )
         )
 
