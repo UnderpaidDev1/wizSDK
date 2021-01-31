@@ -20,6 +20,7 @@ Client
 Defaults
 --------
 .. autodata:: wizsdk.client.SPELLS_FOLDER
+.. autodata:: wizsdk.client.IMAGE_FOLDER
 .. autodata:: wizsdk.client.DEFAULT_MOUNT_SPEED
 
 
@@ -73,6 +74,12 @@ Window
 .. autoclass:: Window
    :members:
    :undoc-members:
+
+Hot Keys
+======
+
+.. autoclass:: HotkeyEvents
+   :members:
 
 Utils
 =====

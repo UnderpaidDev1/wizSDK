@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.2.1
+                1.3.0
               </div>
             
           
@@ -103,6 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="#mouse">Mouse</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#devicecontext">DeviceContext</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#window">Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#hot-keys">Hot Keys</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#module-wizsdk.utils">Utils</a></li>
 </ul>
 
@@ -238,8 +239,16 @@
 
 <dl class="py method">
 <dt id="wizsdk.Client.click_confirm">
-<em class="property">async </em><code class="sig-name descname">click_confirm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Client.click_confirm" title="Permalink to this definition">¶</a></dt>
+<em class="property">async </em><code class="sig-name descname">click_confirm</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Client.click_confirm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Waits for the “confirm” prompt, and clicks “confirm”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>timeout</strong> (<em>optional</em>) – value in seconds to timeout if it hasn’t finished yet. Defaults to None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the function completed successfully, False if the function timed out.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -272,9 +281,17 @@
 
 <dl class="py method">
 <dt id="wizsdk.Client.finish_loading">
-<em class="property">async </em><code class="sig-name descname">finish_loading</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Client.finish_loading" title="Permalink to this definition">¶</a></dt>
+<em class="property">async </em><code class="sig-name descname">finish_loading</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#wizsdk.Client.finish_loading" title="Permalink to this definition">¶</a></dt>
 <dd><p>Waits for player to have gone through the loading screen.
 If this function is called too late and the player is already out of the loading screen, it will wait indefinitely.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>timeout</strong> (<em>optional</em>) – value in seconds to timeout if it hasn’t finished yet. Defaults to None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the function completed successfully, False if the function timed out.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -373,12 +390,18 @@ Requires the <code class="docutils literal notranslate"><span class="pre">quest_
 
 <dl class="py method">
 <dt id="wizsdk.Client.go_through_dialog">
-<em class="property">async </em><code class="sig-name descname">go_through_dialog</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">times</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Client.go_through_dialog" title="Permalink to this definition">¶</a></dt>
+<em class="property">async </em><code class="sig-name descname">go_through_dialog</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">times</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Client.go_through_dialog" title="Permalink to this definition">¶</a></dt>
 <dd><p>Goes through the prompts of the dialog (“press x” or “more”/”continue”). Waits for “press x” or the dialog box before starting.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>times</strong> (<em>int</em>) – Defaults to 1
-The number of times to go through. (When going through quests, you might need to set this to 2. There’s one to hand in the quest, the second to get the next quest)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>times</strong> (<em>int</em>) – Defaults to 1
+The number of times to repeat. (When going through quests, you might need to set this to 2. There’s one to hand in the quest, the second to get the next quest)</p></li>
+<li><p><strong>timeout</strong> (<em>optional</em>) – value in seconds to timeout if it hasn’t finished yet. Defaults to None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the function completed successfully, False if the function timed out.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -479,12 +502,19 @@ Detects if the player’s mana is low by matching a blue pixel in the lower thir
 
 <dl class="py method">
 <dt id="wizsdk.Client.logout_and_in">
-<em class="property">async </em><code class="sig-name descname">logout_and_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">confirm</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Client.logout_and_in" title="Permalink to this definition">¶</a></dt>
+<em class="property">async </em><code class="sig-name descname">logout_and_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">confirm</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">confirm_timeout</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Client.logout_and_in" title="Permalink to this definition">¶</a></dt>
 <dd><p>Logs the user out and then logs it in again.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>confirm</strong> (<em>bool</em><em>, </em><em>optional</em>) – Should the bot wait for a “confirm” prompt before continuing. Defaults to False
-Set to True if logging out durring a battle or to exit an unfinished dungeon.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>confirm</strong> (<em>bool</em><em>, </em><em>optional</em>) – Should the bot wait for a “confirm” prompt before continuing. Defaults to False
+Set to True if logging out durring a battle or to exit an unfinished dungeon.</p></li>
+<li><p><strong>confirm_timeout</strong> – timeout argument for the <code class="docutils literal notranslate"><span class="pre">click_confirm</span></code> task. Defaults to None</p></li>
+<li><p><strong>timeout</strong> – time in seconds before the function times out. Defaults to None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the function completed successfully, False if the function timed out.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -497,8 +527,16 @@ Set to True if logging out durring a battle or to exit an unfinished dungeon.</p
 
 <dl class="py method">
 <dt id="wizsdk.Client.press_x">
-<em class="property">async </em><code class="sig-name descname">press_x</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Client.press_x" title="Permalink to this definition">¶</a></dt>
+<em class="property">async </em><code class="sig-name descname">press_x</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Client.press_x" title="Permalink to this definition">¶</a></dt>
 <dd><p>Waits for the “press x” prompt and sends the “X” key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>timeout</strong> (<em>optional</em>) – value in seconds to timeout if it hasn’t finished yet. Defaults to None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the function completed successfully, False if the function timed out.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -620,6 +658,12 @@ Default can be changed by setting the <code class="docutils literal notranslate"
 </dd></dl>
 
 <dl class="py data">
+<dt id="wizsdk.client.IMAGE_FOLDER">
+<code class="sig-prename descclassname">wizsdk.client.</code><code class="sig-name descname">IMAGE_FOLDER</code><em class="property"> = '/'</em><a class="headerlink" href="#wizsdk.client.IMAGE_FOLDER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default folder to look for images in.</p>
+</dd></dl>
+
+<dl class="py data">
 <dt id="wizsdk.client.DEFAULT_MOUNT_SPEED">
 <code class="sig-prename descclassname">wizsdk.client.</code><code class="sig-name descname">DEFAULT_MOUNT_SPEED</code><em class="property"> = 1.4</em><a class="headerlink" href="#wizsdk.client.DEFAULT_MOUNT_SPEED" title="Permalink to this definition">¶</a></dt>
 <dd><p>Default mount speed (40%)</p>
@@ -661,7 +705,7 @@ Default can be changed by setting the <code class="docutils literal notranslate"
 <h1>Battle<a class="headerlink" href="#battle" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="wizsdk.Battle">
-<em class="property">class </em><code class="sig-prename descclassname">wizsdk.</code><code class="sig-name descname">Battle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Battle" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">wizsdk.</code><code class="sig-name descname">Battle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">default_image_folder</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Battle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Battle class</p>
 <p class="rubric">Example</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="c1"># register the client</span>
@@ -945,38 +989,94 @@ If the mouse is already outside, return</p>
 <dl class="py method">
 <dt id="wizsdk.DeviceContext.get_image">
 <code class="sig-name descname">get_image</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">region</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.DeviceContext.get_image" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>returns a byte array with the pixel data of the <code class="docutils literal notranslate"><span class="pre">region</span></code> from the <code class="docutils literal notranslate"><span class="pre">window_handle</span></code> window. <code class="docutils literal notranslate"><span class="pre">region</span></code> is relative to the <code class="docutils literal notranslate"><span class="pre">window_handle</span></code> window. If no <code class="docutils literal notranslate"><span class="pre">region</span></code> is specified, it will capture the entire window. If no <code class="docutils literal notranslate"><span class="pre">window_handle</span></code> is provided on initiation, monitor 1 is used as the context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>region</strong> – (x, y, width, height) tuple relative to the <code class="docutils literal notranslate"><span class="pre">window_handle</span></code> context. Defaults to None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A 2d numpy array representing the pixel data of the captured region.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.DeviceContext.get_pixel">
-<code class="sig-name descname">get_pixel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.DeviceContext.get_pixel" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">get_pixel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span> &#x2192; tuple<a class="headerlink" href="#wizsdk.DeviceContext.get_pixel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the (red, green, blue) channel’s of the pixel at <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code> relative to the <code class="docutils literal notranslate"><span class="pre">window_handle</span></code> context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – </p></li>
+<li><p><strong>y</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(r, g, b) tuple</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.DeviceContext.is_gray_rect">
 <code class="sig-name descname">is_gray_rect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">region</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">25</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.DeviceContext.is_gray_rect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>calculates if a <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">width,</span> <span class="pre">height)</span></code> <code class="docutils literal notranslate"><span class="pre">region</span></code> is gray by iterating through all its pixels and calculating the difference between the channel with the lowest value, and the one with the highest value. Stops iterating if that value is greater than <code class="docutils literal notranslate"><span class="pre">threshold</span></code>. Returns the highest of the values calculated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>region</strong> – (x, y, width, height) tuple relative to the <code class="docutils literal notranslate"><span class="pre">window_handle</span></code> context.</p></li>
+<li><p><strong>threshold</strong> – difference allowed between highest channel and lowest channel to still be considered gray.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the greatest difference between the highest channel and lowest channel.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.DeviceContext.locate_on_screen">
-<code class="sig-name descname">locate_on_screen</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">match_img</span></em>, <em class="sig-param"><span class="n">region</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">debug</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.DeviceContext.locate_on_screen" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">locate_on_screen</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">match_img</span></em>, <em class="sig-param"><span class="n">region</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">debug</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">folder</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.DeviceContext.locate_on_screen" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attempts to locate <cite>match_img</cite> in the Wizard101 window.
-Returns (x, y) tuple for center of match if found. False otherwise.
 pass a rect tuple <cite>(x, y, width, height)</cite> as the <cite>region</cite> argument to narrow
 down the area to look for the image.
 Adjust <cite>threshold</cite> for the precision of the match (between 0 and 1, the lowest being more precise).
 Set <cite>debug</cite> to True for extra debug info</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>match_img</strong> – to image to locate, can be a file name or a numpy array</p></li>
+<li><p><strong>region</strong> – (x, y, width, height) tuple relative to the <code class="docutils literal notranslate"><span class="pre">window_handle</span></code> context. Defaults to None</p></li>
+<li><p><strong>theshold</strong> – precision of the match – between 0 and 1, the lowest being more precise</p></li>
+<li><p><strong>debug</strong> – set to True to show a pop up of the area that matched the image provided.</p></li>
+<li><p><strong>folder</strong> – folder to look in. Overrides <code class="docutils literal notranslate"><span class="pre">IMAGE_FOLDER</span></code> default</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(x, y) tuple for center of match if found. False otherwise.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.DeviceContext.pixel_matches_color">
 <code class="sig-name descname">pixel_matches_color</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xy</span></em>, <em class="sig-param"><span class="n">expected_rgb</span></em>, <em class="sig-param"><span class="n">tolerance</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.DeviceContext.pixel_matches_color" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>gets the value of a pixel with <code class="docutils literal notranslate"><span class="pre">get_pixel</span></code> and checks it against <code class="docutils literal notranslate"><span class="pre">expected_rgb</span></code>. Accepts <code class="docutils literal notranslate"><span class="pre">tolerance</span></code> amount of differences between the pixel and its expected value.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.DeviceContext.screenshot">
-<code class="sig-name descname">screenshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">region</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.DeviceContext.screenshot" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">screenshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">region</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.DeviceContext.screenshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>captures a screenshot of the provided <code class="docutils literal notranslate"><span class="pre">region</span></code>, saves it to file as <code class="docutils literal notranslate"><span class="pre">filename</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> – what to save to image as</p></li>
+<li><p><strong>region</strong> – (x, y, width, height) tuple relative to the <code class="docutils literal notranslate"><span class="pre">window_handle</span></code> context. Defaults to None</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -1008,6 +1108,74 @@ Set <cite>debug</cite> to True for extra debug info</p>
 <dt id="wizsdk.Window.set_active">
 <code class="sig-name descname">set_active</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Window.set_active" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the window to active if it isn’t already</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="hot-keys">
+<h1>Hot Keys<a class="headerlink" href="#hot-keys" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="wizsdk.HotkeyEvents">
+<em class="property">class </em><code class="sig-prename descclassname">wizsdk.</code><code class="sig-name descname">HotkeyEvents</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">debug</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.HotkeyEvents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hotkey event manager class</p>
+<p class="rubric">Examples</p>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">wizsdk</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+
+<span class="c1"># Initiate the event manager</span>
+<span class="n">events</span> <span class="o">=</span> <span class="n">wizsdk</span><span class="o">.</span><span class="n">HotkeyEvents</span><span class="p">()</span>
+
+<span class="c1"># Add hotkeys</span>
+<span class="k">def</span> <span class="nf">print_hello</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello, world!&quot;</span><span class="p">)</span>
+
+<span class="n">events</span><span class="o">.</span><span class="n">set_hotkey</span><span class="p">(</span><span class="s2">&quot;ctrl + q&quot;</span><span class="p">,</span> <span class="n">events</span><span class="o">.</span><span class="n">safe_quit</span><span class="p">)</span> <span class="c1"># safetly quit the program</span>
+<span class="n">events</span><span class="o">.</span><span class="n">set_hotkey</span><span class="p">(</span><span class="s2">&quot;SPACEBAR&quot;</span><span class="p">,</span> <span class="n">print_hello</span><span class="p">)</span>
+<span class="n">events</span><span class="o">.</span><span class="n">set_hotkey</span><span class="p">(</span><span class="s2">&quot;Left mouse&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;click&quot;</span><span class="p">))</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main_function</span><span class="p">():</span>
+    <span class="c1"># main script goes here</span>
+
+<span class="c1"># run the two coroutines at the same time</span>
+<span class="n">wizsdk</span><span class="o">.</span><span class="n">run_threads</span><span class="p">(</span><span class="n">events</span><span class="o">.</span><span class="n">listen</span><span class="p">(),</span> <span class="n">main_function</span><span class="p">())</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="wizsdk.HotkeyEvents.listen">
+<em class="property">async </em><code class="sig-name descname">listen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.HotkeyEvents.listen" title="Permalink to this definition">¶</a></dt>
+<dd><p>starts an event loop that will listen for key presses and call actions triggered by the hotkeys.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.HotkeyEvents.safe_quit">
+<em class="property">async </em><code class="sig-name descname">safe_quit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.HotkeyEvents.safe_quit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safetly quit the program by first un-hooking all clients.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.HotkeyEvents.set_hotkey">
+<code class="sig-name descname">set_hotkey</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trigger</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.HotkeyEvents.set_hotkey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers a hotkey</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trigger</strong> – the hotkey(s) that will trigger the action. Separate multiple keys with a <code class="docutils literal notranslate"><span class="pre">+</span></code></p></li>
+<li><p><strong>action</strong> – the function that will run when the hotkey is triggered. This can be a regular or an <a href="#id1"><span class="problematic" id="id2">``</span></a>await``able function</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.HotkeyEvents.unset_hotkey">
+<code class="sig-name descname">unset_hotkey</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trigger</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.HotkeyEvents.unset_hotkey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a previously set hotkey</p>
+<dl class="simple">
+<dt>Args</dt><dd><p>trigger: the same trigger used to register the hotkey</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1079,11 +1247,28 @@ Set <cite>debug</cite> to True for extra debug info</p>
 
 <dl class="py function">
 <dt id="wizsdk.utils.packaged_img">
-<code class="sig-prename descclassname">wizsdk.utils.</code><code class="sig-name descname">packaged_img</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.utils.packaged_img" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">wizsdk.utils.</code><code class="sig-name descname">packaged_img</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.utils.packaged_img" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function to reference images packaged within the WizSDK module</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Full file path to the packaged image.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="wizsdk.utils.run_threads">
+<code class="sig-prename descclassname">wizsdk.utils.</code><code class="sig-name descname">run_threads</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">coroutines</span></em>, <em class="sig-param"><span class="n">return_when</span><span class="o">=</span><span class="default_value">'FIRST_COMPLETED'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.utils.run_threads" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates an asyncio event loop to run coroutines concurrently</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coroutines</strong> – any amount of coroutines to run at the same time</p></li>
+<li><p><strong>return_when</strong> (<em>str</em>) – FIRST_COMPLETED, ALL_COMPLETED, or FIRST_EXCEPTION</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – <cite>return_when</cite> argument is invalid</p>
 </dd>
 </dl>
 </dd></dl>
