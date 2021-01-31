@@ -629,14 +629,12 @@ class Client(DeviceContext, Keyboard, Window):
         await self.mouse.click(780, 50, duration=0.2)
         await self.wait(0.2)
 
-        file_name = path.join(IMAGE_FOLDER, match_img)
-
         # Find friend that matches friend match_img
         found = False
         last_page = False
         while (not found) and (not last_page):
             last_page = not self.pixel_matches_color((775, 328), (206, 44, 24), 50)
-            found = self.locate_on_screen(file_name, region=AREA_FRIENDS, threshold=0.2)
+            found = self.locate_on_screen(match_img, region=AREA_FRIENDS, threshold=0.2)
 
             if (not found) and not last_page:
                 await self.mouse.click(775, 328, duration=0.2)
