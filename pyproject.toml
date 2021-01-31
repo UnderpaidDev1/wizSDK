@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "wizSDK"
-version = "1.3.2"
+version = "1.3.3"
 description = "API for interacting with and making bots for wizard101"
 authors = ["Underpaid Dev <underpaiddev1@gmail.com>"]
 readme = "README.md"

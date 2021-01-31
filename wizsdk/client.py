@@ -27,7 +27,7 @@ AREA_CONFIRM = (355, 370, 100, 70)
 SPELLS_FOLDER = "spells"
 """ Default folder to look for spells in"""
 
-IMAGE_FOLDER = "/"
+IMAGE_FOLDER = ""
 """ Default folder to look for images in."""
 
 DEFAULT_MOUNT_SPEED = 1.4

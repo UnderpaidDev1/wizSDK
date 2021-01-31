@@ -251,7 +251,7 @@ class DeviceContext(Window):
         
         """
         to_match = (
-            path.join(folder or self._default_image_folder or "/", match_img)
+            path.join(folder or self._default_image_folder or "", match_img)
             if type(match_img) == str
             else match_img
         )
