@@ -4,10 +4,7 @@ wizsdk.egg-info
 venv
 test
 _spells
+_icons
 pyvenv.cfg
 __main__.py
 **/__pycache__
-
-boss_match.png
-pet_match.png
-friend_match.png
