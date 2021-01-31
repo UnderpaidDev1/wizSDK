@@ -13,6 +13,39 @@ Used to store player location
 """
 
 
+def run_threads(*coroutines, return_when="FIRST_COMPLETED"):
+    """
+    creates an asyncio event loop to run coroutines concurrently
+    
+    Args:
+        coroutines: any amount of coroutines to run at the same time
+        return_when (str): FIRST_COMPLETED, ALL_COMPLETED, or FIRST_EXCEPTION
+    
+    Raises:
+        ValueError: `return_when` argument is invalid
+    """
+
+    if return_when not in ("FIRST_COMPLETED", "ALL_COMPLETED", "FIRST_EXCEPTION"):
+        raise ValueError(
+            f"invalid value for `return_when` {return_when}. expected FIRST_COMPLETED, ALL_COMPLETED, or FIRST_EXCEPTION"
+        )
+
+    to_return = getattr(asyncio, return_when)
+
+    loop = asyncio.get_event_loop()
+    job = asyncio.wait(coroutines, return_when=to_return)
+
+    done, pending = loop.run_until_complete(job)
+
+    # finish / cancel all tasks properly
+    # https://stackoverflow.com/a/62443715/10751635
+    for t in pending:
+        t.cancel()
+
+    while not all([t.done() for t in pending]):
+        loop._run_once()
+
+
 def get_all_wiz_handles() -> list:
     """
     Retrieves all window handles for windows that have the 
@@ -76,7 +109,7 @@ async def finish_all_loading(*players):
     await asyncio.gather(*[player.finish_loading() for player in players])
 
 
-def packaged_img(filename: str):
+def packaged_img(filename: str = ""):
     """
     Helper function to reference images packaged within the WizSDK module
     
