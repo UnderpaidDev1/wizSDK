@@ -19,14 +19,23 @@ from .window import Window
 from .battle import Battle
 from .card import Card
 
+# rectangles defined as (x, y, width, height)
+AREA_FRIENDS = (625, 65, 20, 240)
+AREA_SPELLS = (245, 290, 370, 70)
+AREA_CONFIRM = (355, 370, 100, 70)
+
 SPELLS_FOLDER = "spells"
 """ Default folder to look for spells in"""
+
+IMAGE_FOLDER = "/"
+""" Default folder to look for images in."""
 
 DEFAULT_MOUNT_SPEED = 1.4
 """ Default mount speed (40%) """
 
 user32 = ctypes.windll.user32
-__DIRNAME__ = os.path.dirname(__file__)
+
+# Keep track of all clients
 all_clients = []
 
 
@@ -59,11 +68,8 @@ class Client(DeviceContext, Keyboard, Window):
         self.window_handle = handle
         self.logging = True
         self.name = None
-        # rectangles defined as (x, y, width, height)
-        self._friends_area = (625, 65, 20, 240)
-        self._spell_area = (245, 290, 370, 70)
-        self._confirm_area = (355, 370, 100, 70)
 
+        self._default_image_folder = IMAGE_FOLDER
         self.walker = None
         self.mouse = Mouse(handle)
 
@@ -192,23 +198,9 @@ class Client(DeviceContext, Keyboard, Window):
         Returns:
             The health value of the player as an int
         """
-        # refresh_triggered = False
-        # mem_health = await self.walker.health()
-        # while (not mem_health) or (mem_health < 0) or (mem_health > 20_000):
-        #     # print(mem_health)
-        #     if not refresh_triggered:
-        #         # Open and close character page to force memory update
-        #         self.log("Refreshing health value")
-        #         await self.send_key("C", 0.1)
-        #         await self.wait(0.8)
-        #         await self.send_key("C", 0.1)
-        #         refresh_triggered = True
-        #     await self.wait(0.2)
-        #     mem_health = await self.walker.health()
 
-        # return int(mem_health)
         mem_health = await self.walker.health()
-        if (mem_health) and (mem_health >= 0) and (mem_health < 20_000):
+        if (mem_health != None) and (mem_health >= 0) and (mem_health < 20_000):
             self._last_health = mem_health
 
         return self._last_health
@@ -220,21 +212,9 @@ class Client(DeviceContext, Keyboard, Window):
         Returns:
             The mana value of the player as an int
         """
-        # refresh_triggered = False
-        # mem_mana = await self.walker.mana()
-        # while (not mem_mana) or (mem_mana < 0) or (mem_mana > 20_000):
-        #     if not refresh_triggered:
-        #         self.log("Refreshing mana value")
-        #         # Open and close character page to force memory update
-        #         await self.send_key("C", 0.1)
-        #         await self.send_key("C", 0.1)
-        #         refresh_triggered = True
-        #     await self.wait(0.2)
-        #     mem_mana = await self.walker.mana()
 
-        # return int(mem_mana)
         mem_mana = await self.walker.mana()
-        if (mem_mana) and (mem_mana >= 0) and (mem_mana < 20_000):
+        if (mem_mana != None) and (mem_mana >= 0) and (mem_mana < 20_000):
             self._last_mana = mem_mana
 
         return self._last_mana
@@ -324,11 +304,11 @@ class Client(DeviceContext, Keyboard, Window):
         Returns:
             tuple: (x, y) where the confirm button has been found
         """
-        confirm_img = self.get_image(self._confirm_area)
+        confirm_img = self.get_image(AREA_CONFIRM)
         found = match_image(confirm_img, packaged_img("confirm.png"), threshold=0.2)
         if found:
-            x = found[0] + self._confirm_area[0]
-            y = found[1] + self._confirm_area[1]
+            x = found[0] + AREA_CONFIRM[0]
+            y = found[1] + AREA_CONFIRM[1]
             found = (x, y)
 
         return found
@@ -394,97 +374,171 @@ class Client(DeviceContext, Keyboard, Window):
         if mana_low or health_low:
             await self.mouse.click(160, 590, delay=0.2)
 
-    async def finish_loading(self):
+    async def finish_loading(self, *, timeout=None) -> bool:
         """
         Waits for player to have gone through the loading screen.
         If this function is called too late and the player is already out of the loading screen, it will wait indefinitely.
+        
+        Args:
+            timeout (optional): value in seconds to timeout if it hasn't finished yet. Defaults to None
+            
+        Returns:
+            True if the function completed successfully, False if the function timed out.
         """
-        self.log("Awaiting loading")
 
-        base_addr = lambda: self.walker._memory.process.read_int(
-            self.walker._memory.player_struct_addr
-        )
-        player_struct = base_addr()
+        async def _loading_coro():
+            self.log("Awaiting loading")
 
-        # Wait for base_addr to change
-        while player_struct == base_addr():
-            await asyncio.sleep(0.2)
+            base_addr = lambda: self.walker._memory.process.read_int(
+                self.walker._memory.player_struct_addr
+            )
+            player_struct = base_addr()
 
-        await asyncio.sleep(1.5)
+            # Wait for base_addr to change
+            while player_struct == base_addr():
+                await asyncio.sleep(0.2)
 
-    async def go_through_dialog(self, times=1):
+            await asyncio.sleep(2)
+
+        # run it with the timeout
+        try:
+            await asyncio.wait_for(_loading_coro(), timeout=timeout)
+            return True
+        except asyncio.TimeoutError:
+            return False
+
+    async def go_through_dialog(self, times=1, *, timeout=None):
         # Wait for press X, or more/done button
         """
         Goes through the prompts of the dialog ("press x" or "more"/"continue"). Waits for "press x" or the dialog box before starting.
         
         Args:
             times (int): Defaults to 1
-                The number of times to go through. (When going through quests, you might need to set this to 2. There's one to hand in the quest, the second to get the next quest)
+                The number of times to repeat. (When going through quests, you might need to set this to 2. There's one to hand in the quest, the second to get the next quest)
+            timeout (optional): value in seconds to timeout if it hasn't finished yet. Defaults to None
+            
+        Returns:
+            True if the function completed successfully, False if the function timed out.
         """
-        self.log("Going through dialog")
-        while times >= 1:
-            times -= 1
-            while (not self.is_press_x()) and (not self.is_dialog_more()):
-                await asyncio.sleep(0.5)
 
-            if self.is_press_x():
-                await self.send_key("X", 0.1)
+        async def _dialog_coro():
+            self.log("Going through dialog")
+            while times >= 1:
+                times -= 1
+                while (not self.is_press_x()) and (not self.is_dialog_more()):
+                    await asyncio.sleep(0.5)
 
-            while not self.is_dialog_more():
-                await asyncio.sleep(0.5)
+                if self.is_press_x():
+                    await self.send_key("X", 0.1)
 
-            while self.is_dialog_more():
-                await self.send_key("SPACEBAR", 0.1)
-                await asyncio.sleep(0.1)
+                while not self.is_dialog_more():
+                    await asyncio.sleep(0.5)
 
-        await asyncio.sleep(1)
+                while self.is_dialog_more():
+                    await self.send_key("SPACEBAR", 0.1)
+                    await asyncio.sleep(0.1)
 
-    async def logout_and_in(self, confirm=False):
+            await asyncio.sleep(1)
+
+        # run it with the timeout
+        try:
+            await asyncio.wait_for(_dialog_coro(), timeout=timeout)
+            return True
+        except asyncio.TimeoutError:
+            return False
+
+    async def logout_and_in(self, confirm=False, *, confirm_timeout=None, timeout=None):
         """
         Logs the user out and then logs it in again.
         
         Args:
             confirm (bool, optional): Should the bot wait for a "confirm" prompt before continuing. Defaults to False
                 Set to True if logging out durring a battle or to exit an unfinished dungeon.
+            confirm_timeout: timeout argument for the ``click_confirm`` task. Defaults to None
+            timeout: time in seconds before the function times out. Defaults to None
+        
+        Returns:
+            True if the function completed successfully, False if the function timed out.
         """
-        self.log("Logging out")
-        await self.send_key("ESC", 0.1)
-        await self.mouse.click(259, 506, delay=0.3)
-        if confirm:
-            await self.click_confirm()
-        # wait for player select screen
-        self.log("Wait for loading")
-        while not (self.pixel_matches_color((361, 599), (133, 36, 62), tolerance=20)):
-            await self.wait(0.5)
 
-        self.log("Logging back in")
-        await self.mouse.click(395, 594)
-        await self.finish_loading()
-        if self.is_crown_shop():
-            await self.wait(0.5)
+        async def _coro():
+            self.log("Logging out")
             await self.send_key("ESC", 0.1)
-            await self.send_key("ESC", 0.1)
+            await self.mouse.click(259, 506, delay=0.3)
+            if confirm:
+                await self.click_confirm(timeout=confirm_timeout)
+            # wait for player select screen
+            self.log("Wait for loading")
+            while not (
+                self.pixel_matches_color((361, 599), (133, 36, 62), tolerance=20)
+            ):
+                await self.wait(0.5)
 
-    async def press_x(self):
+            self.log("Logging back in")
+            await self.mouse.click(395, 594)
+            await self.finish_loading()
+            if self.is_crown_shop():
+                await self.wait(0.5)
+                await self.send_key("ESC", 0.1)
+                await self.send_key("ESC", 0.1)
+
+        # run it with the timeout
+        try:
+            await asyncio.wait_for(_coro(), timeout=timeout)
+            return True
+        except asyncio.TimeoutError:
+            return False
+
+    async def press_x(self, *, timeout=None):
         """
         Waits for the "press x" prompt and sends the "X" key.
+        
+        Args:
+            timeout (optional): value in seconds to timeout if it hasn't finished yet. Defaults to None
+            
+        Returns:
+            True if the function completed successfully, False if the function timed out.
         """
-        while not self.is_press_x():
-            await self.wait(0.5)
-        await self.send_key("X", 0.1)
 
-    async def click_confirm(self):
+        async def _press_x_coro():
+            while not self.is_press_x():
+                await self.wait(0.5)
+            await self.send_key("X", 0.1)
+
+        # run it with the timeout
+        try:
+            await asyncio.wait_for(_press_x_coro(), timeout=timeout)
+            return True
+        except asyncio.TimeoutError:
+            return False
+
+    async def click_confirm(self, *, timeout=None):
         """
         Waits for the "confirm" prompt, and clicks "confirm"
+        
+        Args:
+            timeout (optional): value in seconds to timeout if it hasn't finished yet. Defaults to None
+            
+        Returns:
+            True if the function completed successfully, False if the function timed out.
         """
-        await self.wait(0.2)  #
-        confirm = self.get_confirm()
-        while not confirm:
-            await self.wait(0.5)
-            confirm = self.get_confirm()
 
-        await self.mouse.click(*confirm, duration=0.2, delay=0.2)
-        await self.wait(0.5)
+        async def _confirm_coro():
+            await self.wait(0.2)  #
+            confirm = self.get_confirm()
+            while not confirm:
+                await self.wait(0.5)
+                confirm = self.get_confirm()
+
+            await self.mouse.click(*confirm, duration=0.2, delay=0.2)
+            await self.wait(0.5)
+
+        # run it with the timeout
+        try:
+            await asyncio.wait_for(_confirm_coro(), timeout=timeout)
+            return True
+        except asyncio.TimeoutError:
+            return False
 
     """
     POSITION & MOVEMENT
@@ -575,15 +629,14 @@ class Client(DeviceContext, Keyboard, Window):
         await self.mouse.click(780, 50, duration=0.2)
         await self.wait(0.2)
 
+        file_name = path.join(IMAGE_FOLDER, match_img)
+
         # Find friend that matches friend match_img
         found = False
         last_page = False
         while (not found) and (not last_page):
-            print("finding")
             last_page = not self.pixel_matches_color((775, 328), (206, 44, 24), 50)
-            found = self.locate_on_screen(
-                match_img, region=self._friends_area, threshold=0.2
-            )
+            found = self.locate_on_screen(file_name, region=AREA_FRIENDS, threshold=0.2)
 
             if (not found) and not last_page:
                 await self.mouse.click(775, 328, duration=0.2)
@@ -629,7 +682,7 @@ class Client(DeviceContext, Keyboard, Window):
         Returns:
             Battle: object with battle methods linked to this client
         """
-        return Battle(self, name)
+        return Battle(self, name, default_image_folder=self._default_image_folder)
 
     async def find_spell(
         self, spell_name: str, threshold: float = 0.12, ignore_gray_detection=False
@@ -651,10 +704,10 @@ class Client(DeviceContext, Keyboard, Window):
             await self.mouse.move_to(100, 100, duration=0.2)
         else:
             # Move mouse out of area to get a clear image
-            await self.mouse.move_out(self._spell_area)
+            await self.mouse.move_out(AREA_SPELLS)
 
         # Get screenshot of `spell_area`
-        b_spell_area = self.get_image(self._spell_area)
+        b_spell_area = self.get_image(AREA_SPELLS)
 
         extensions = [".png", ".jpg", "jpeg", ".bmp"]
         file_name = spell_name
@@ -668,7 +721,7 @@ class Client(DeviceContext, Keyboard, Window):
         if res:
             x, y = res
             # We're only interested in the x position
-            offset_x = self._spell_area[0]
+            offset_x = AREA_SPELLS[0]
             # a card width is 52 pixels, round to the nearest 1/2 card (26 pixels)
             adjusted_x = round(x / 26) * 26
 
