@@ -421,7 +421,7 @@ class Client(DeviceContext, Keyboard, Window):
             True if the function completed successfully, False if the function timed out.
         """
 
-        async def _dialog_coro():
+        async def _dialog_coro(times):
             self.log("Going through dialog")
             while times >= 1:
                 times -= 1
@@ -442,7 +442,7 @@ class Client(DeviceContext, Keyboard, Window):
 
         # run it with the timeout
         try:
-            await asyncio.wait_for(_dialog_coro(), timeout=timeout)
+            await asyncio.wait_for(_dialog_coro(times), timeout=timeout)
             return True
         except asyncio.TimeoutError:
             return False
