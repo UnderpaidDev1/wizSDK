@@ -389,16 +389,14 @@ class Client(DeviceContext, Keyboard, Window):
         async def _loading_coro():
             self.log("Awaiting loading")
 
-            base_addr = lambda: self.walker._memory.process.read_int(
-                self.walker._memory.player_struct_addr
-            )
+            base_addr = lambda: self.walker._handler.read_player_base()
             player_struct = base_addr()
 
             # Wait for base_addr to change
             while player_struct == base_addr():
                 await asyncio.sleep(0.2)
 
-            await asyncio.sleep(2)
+            await asyncio.sleep(1)
 
         # run it with the timeout
         try:
