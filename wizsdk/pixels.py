@@ -96,9 +96,11 @@ class DeviceContext(Window):
             mBM, ctypes.sizeof(_BITMAP), ctypes.byref(bitmap)
         )
         # Account for the ZeroDevision error
-        if bits_transfered == 0:
-            # Reccurse until bits_transfered != 0.
-            return self.get_image(region)
+        bits_transfered = 0
+        while bits_transfered == 0:
+          bits_transfered = gdi32.GetObjectA(
+            mBM, ctypes.sizeof(_BITMAP), ctypes.byref(bitmap)
+          )
 
         bi = _BITMAPINFOHEADER()
         bi.biSize = ctypes.sizeof(_BITMAPINFOHEADER)
