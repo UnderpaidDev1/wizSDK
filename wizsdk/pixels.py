@@ -98,9 +98,9 @@ class DeviceContext(Window):
         # Account for the ZeroDevision error
         bits_transfered = 0
         while bits_transfered == 0:
-          bits_transfered = gdi32.GetObjectA(
-            mBM, ctypes.sizeof(_BITMAP), ctypes.byref(bitmap)
-          )
+            bits_transfered = gdi32.GetObjectA(
+                mBM, ctypes.sizeof(_BITMAP), ctypes.byref(bitmap)
+            )
 
         bi = _BITMAPINFOHEADER()
         bi.biSize = ctypes.sizeof(_BITMAPINFOHEADER)
