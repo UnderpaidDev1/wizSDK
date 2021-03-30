@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "wizSDK"
-version = "1.3.4"
+version = "1.3.5"
 description = "API for interacting with and making bots for wizard101"
 authors = ["Underpaid Dev <underpaiddev1@gmail.com>"]
 readme = "README.md"
@@ -11,7 +11,7 @@ asyncio = "^3.4.3"
 numpy = "^1.19.1"
 opencv-python = "^4.4.0"
 asyncchain = "^0.1.0"
-wizwalker = "^0.13.0"
+wizwalker = "^0.14.0"
 Sphinx = "^3.4.3"
 
 [tool.poetry.dev-dependencies]

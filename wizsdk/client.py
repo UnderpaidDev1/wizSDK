@@ -714,7 +714,7 @@ class Client(DeviceContext, Keyboard, Window):
 
         spell_path = os.path.join(SPELLS_FOLDER, file_name)
 
-        res = match_image(b_spell_area, spell_path, threshold, debug=False)
+        res = match_image(b_spell_area, spell_path, threshold)
 
         if res:
             x, y = res
