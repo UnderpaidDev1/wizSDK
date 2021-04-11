@@ -2,6 +2,7 @@
 import ctypes
 from ctypes.wintypes import POINT
 import time
+import asyncio
 
 # Custom imports
 from wizsdk.window import Window, screen_size
@@ -56,20 +57,31 @@ class Mouse(Window):
     _SM_CXSCREEN = 0
     _SM_CYSCREEN = 1
 
-    def __init__(self, window_handle=None):
+    def __init__(self, window_handle=None, silent_mode=False, walker=None):
         super().__init__(window_handle)
         # Window handle to which the mouse events will be relative to
         self.window_handle = window_handle
+        self.walker = walker
+
+        if silent_mode and walker == None:
+            raise ValueError("A walker must be passed to Mouse to use silent mode")
+
+        self.silent_mode = silent_mode
+        self.silent_xpos = 0
+        self.silent_ypos = 0
 
     def _do_event(self, flags, x_pos, y_pos, data, extra_info):
         """generate a mouse event"""
-        x_calc = int(
-            65536 * x_pos / ctypes.windll.user32.GetSystemMetrics(self._SM_CXSCREEN) + 1
-        )
-        y_calc = int(
-            65536 * y_pos / ctypes.windll.user32.GetSystemMetrics(self._SM_CYSCREEN) + 1
-        )
-        return ctypes.windll.user32.mouse_event(flags, x_calc, y_calc, data, extra_info)
+        if not self.silent_mode:
+            x_calc = int(
+                65536 * x_pos / ctypes.windll.user32.GetSystemMetrics(self._SM_CXSCREEN) + 1
+            )
+            y_calc = int(
+                65536 * y_pos / ctypes.windll.user32.GetSystemMetrics(self._SM_CYSCREEN) + 1
+            )
+            return ctypes.windll.user32.mouse_event(flags, x_calc, y_calc, data, extra_info)
+        else:
+            raise RuntimeError("Mouse._do_event is not supported with silent mode enabled")
 
     def _get_button_value(self, button_name, button_up=False):
         """convert the name of the button into the corresponding value"""
@@ -84,17 +96,26 @@ class Mouse(Window):
             buttons = buttons << 1
         return buttons
 
-    def _set_position(self, pos):
+    async def _set_position(self, pos):
         """
         Set the position of the mouse to the specified coordinates
         relative to the window
         """
         (x, y) = pos
 
-        old_pos = self.get_position()
-        x = x if (x != -1) else old_pos[0]
-        y = y if (y != -1) else old_pos[1]
-        self._do_event(self._MOUSEEVENTF_MOVE + self._MOUSEEVENTF_ABSOLUTE, x, y, 0, 0)
+        if not self.silent_mode:
+            old_pos = self.get_position()
+            x = x if (x != -1) else old_pos[0]
+            y = y if (y != -1) else old_pos[1]
+            self._do_event(self._MOUSEEVENTF_MOVE + self._MOUSEEVENTF_ABSOLUTE, x, y, 0, 0)
+        else:
+            point = POINT()
+            point.x = x
+            point.y = y
+            ctypes.windll.user32.ClientToScreen(self.window_handle, ctypes.byref(point))
+            self.silent_xpos = point.x
+            self.silent_ypos = point.y
+            await self.walker.set_mouse_position(self.silent_xpos, self.silent_ypos, convert_from_client=False)
 
     async def move_to(self, x, y, duration=0.5):
         """
@@ -138,24 +159,25 @@ class Mouse(Window):
             _y = int(round(_y))
 
             # Failsafe check
-            if (_x, _y) not in FAILSAFE_POINTS:
+            if not self.silent_mode and (_x, _y) not in FAILSAFE_POINTS:
                 self.failSafeCheck()
 
-            self._set_position((_x, _y))
+            await self._set_position((_x, _y))
 
         # Failsafe check
-        if (_x, _y) not in FAILSAFE_POINTS:
+        if not self.silent_mode and not (_x, _y) not in FAILSAFE_POINTS:
             self.failSafeCheck()
 
     def press_button(self, x=-1, y=-1, button="left", button_up=False):
         """push a button of the mouse"""
         self.move_to(x, y)
-        self._do_event(self.get_button_value(button, button_up), 0, 0, 0, 0)
+        if not self.silent_mode:
+            self._do_event(self._get_button_value(button, button_up), 0, 0, 0, 0)
+        else:
+            pass # TODO: do something
 
     async def click(self, x=-1, y=-1, button="left", duration=None, delay=0.1):
         """Click at the specified placed"""
-        self.set_active()
-
         # Set default duration
         if duration is None:
             if x == -1 and y == -1:
@@ -168,32 +190,46 @@ class Mouse(Window):
         x = x if (x != -1) else old_pos[0]
         y = y if (y != -1) else old_pos[1]
         await self.move_to(x, y, duration=duration)
-        time.sleep(delay)
-        self._do_event(
-            self._get_button_value(button, False)
-            + self._get_button_value(button, True),
-            0,
-            0,
-            0,
-            0,
-        )
+        await asyncio.sleep(delay)
+        if not self.silent_mode:
+            self.set_active()
+            self._do_event(
+                self._get_button_value(button, False)
+                + self._get_button_value(button, True),
+                0,
+                0,
+                0,
+                0,
+            )
+        else:
+            await self.walker.click(x, y, right_click=button!="left", sleep_duration=delay)
 
     def double_click(self, pos=(-1, -1), button="left"):
         """Double click at the specifed placed"""
-        for i in xrange(2):
+        for i in range(2):
             self.click(pos, button)
 
     def get_position(self):
         """get mouse position"""
-        point = POINT()
-        ctypes.windll.user32.GetCursorPos(ctypes.byref(point))
-        return (point.x, point.y)
+        if not self.silent_mode:
+            point = POINT()
+            ctypes.windll.user32.GetCursorPos(ctypes.byref(point))
+            return (point.x, point.y)
+        else:
+            return (self.silent_xpos, self.silent_ypos)
 
     def get_rel_position(self):
         """get mouse position relative to window"""
-        wx, wy = self.get_rect()[:2]
-        x, y = self.get_position()
-        return (x - wx, y - wy)
+        if not self.silent_mode:
+            wx, wy = self.get_rect()[:2]
+            x, y = self.get_position()
+            return (x - wx, y - wy)
+        else:
+            point = POINT()
+            point.x = self.silent_xpos
+            point.y = self.silent_ypos
+            ctypes.windll.user32.ScreenToClient(self.window_handle, ctypes.byref(point))
+            return (point.x, point.y)
 
     def in_rect(self, rect_area):
         """
@@ -220,17 +256,6 @@ class Mouse(Window):
             await self.move_to(x, y, duration=0.2)
 
     def failSafeCheck(self):
-        if FAILSAFE and self.get_position() in FAILSAFE_POINTS:
+        if not self.silent_mode and FAILSAFE and self.get_position() in FAILSAFE_POINTS:
             raise FailSafeException
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    async def main():
-        mouse = Mouse()
-        mouse._set_position((100, 100))
-        await mouse.move_to(10, 100, duration=1)
-
-    asyncio.run(main())
 
