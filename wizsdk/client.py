@@ -85,7 +85,7 @@ class Client(DeviceContext, Keyboard, Window):
         Args:
             nth (int, optional): Index of the wizard101 client to use (if there's more than one)
             name (str, optional): Name to prepend to the window title. Used for identifying which windows are controlled.
-
+            silent_mouse: When enabled, moves the mouse without taking control of the actual cursor
         """
         client = cls()
         global all_clients
@@ -820,6 +820,7 @@ def register_clients(
         n_handles_expected (int): the expected # of wiz windows opened. Use -1 for undetermined
         names (list): A list of strings that will serve as the names of the windows
         confirm_position (bool): prompt the user to confirm the windows order before continuing
+        silent_mouse: When enabled, moves the mouse without taking control of the actual cursor
 
     Returns:
         client_list (list): A list populated with ``Client`` instances

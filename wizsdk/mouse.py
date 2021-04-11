@@ -58,6 +58,11 @@ class Mouse(Window):
     _SM_CYSCREEN = 1
 
     def __init__(self, window_handle=None, silent_mode=False, walker=None):
+        """
+        Args:
+            silent_mode: When enabled, moves the mouse without taking control of the actual cursor
+            walker: A wizwalker client. It is required for silent mode
+        """
         super().__init__(window_handle)
         # Window handle to which the mouse events will be relative to
         self.window_handle = window_handle
@@ -259,3 +264,13 @@ class Mouse(Window):
         if not self.silent_mode and FAILSAFE and self.get_position() in FAILSAFE_POINTS:
             raise FailSafeException
 
+
+if __name__ == "__main__":
+    import asyncio
+
+    async def main():
+        mouse = Mouse()
+        mouse._set_position((100, 100))
+        await mouse.move_to(10, 100, duration=1)
+
+    asyncio.run(main())
