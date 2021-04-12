@@ -74,6 +74,7 @@ class Mouse(Window):
         self.silent_mode = silent_mode
         self.silent_xpos = 0
         self.silent_ypos = 0
+        self.silent_init = False
 
     def _do_event(self, flags, x_pos, y_pos, data, extra_info):
         """generate a mouse event"""
@@ -101,10 +102,21 @@ class Mouse(Window):
             buttons = buttons << 1
         return buttons
 
+    async def init_silent_mode(self):
+        if self.silent_mode and not self.silent_init:
+            point = POINT()
+            point.x = 100
+            point.y = 100
+            ctypes.windll.user32.ClientToScreen(self.window_handle, ctypes.byref(point))
+            self.silent_xpos = point.x
+            self.silent_ypos = point.y
+            await self.walker.set_mouse_position(self.silent_xpos, self.silent_ypos, convert_from_client=False)
+            self.silent_init = True
+
     async def _set_position(self, pos):
         """
         Set the position of the mouse to the specified coordinates
-        relative to the window
+        relative to the screen
         """
         (x, y) = pos
 
@@ -114,12 +126,9 @@ class Mouse(Window):
             y = y if (y != -1) else old_pos[1]
             self._do_event(self._MOUSEEVENTF_MOVE + self._MOUSEEVENTF_ABSOLUTE, x, y, 0, 0)
         else:
-            point = POINT()
-            point.x = x
-            point.y = y
-            ctypes.windll.user32.ClientToScreen(self.window_handle, ctypes.byref(point))
-            self.silent_xpos = point.x
-            self.silent_ypos = point.y
+            await self.init_silent_mode()
+            self.silent_xpos = x
+            self.silent_ypos = y
             await self.walker.set_mouse_position(self.silent_xpos, self.silent_ypos, convert_from_client=False)
 
     async def move_to(self, x, y, duration=0.5):
@@ -129,7 +138,9 @@ class Mouse(Window):
         # We need to get from (startx, starty) to (x, y)
 
         # Set the X, Y to be relative to the window position
+        await self.init_silent_mode()
         wX, wY, *_ = self.get_rect()
+
         x += wX
         y += wY
 
@@ -181,6 +192,22 @@ class Mouse(Window):
         else:
             pass # TODO: do something
 
+    def wizsdk_client_coords_to_wizwalker(self, x: int, y: int) -> (int, int):
+        """
+        Converts WizSDK client coords to wizwalker client coords
+        """
+        # make absolute
+        wX, wY, *_ = self.get_rect()
+        x += wX
+        y += wY
+
+        # convert to the client coords wizwalker uses
+        point = POINT(x, y)
+        if ctypes.windll.user32.ScreenToClient(self.window_handle, ctypes.byref(point)) == 0:
+            raise RuntimeError("Screen to client conversion failed")
+
+        return (point.x, point.y)
+
     async def click(self, x=-1, y=-1, button="left", duration=None, delay=0.1):
         """Click at the specified placed"""
         # Set default duration
@@ -207,7 +234,8 @@ class Mouse(Window):
                 0,
             )
         else:
-            await self.walker.click(x, y, right_click=button!="left", sleep_duration=delay)
+            (nx, ny) = self.wizsdk_client_coords_to_wizwalker(x, y) # this is needed because walker.click implicitly converts client to scree, but with a different method
+            await self.walker.click(nx, ny, right_click=button!="left", sleep_duration=delay)
 
     def double_click(self, pos=(-1, -1), button="left"):
         """Double click at the specifed placed"""
@@ -230,11 +258,8 @@ class Mouse(Window):
             x, y = self.get_position()
             return (x - wx, y - wy)
         else:
-            point = POINT()
-            point.x = self.silent_xpos
-            point.y = self.silent_ypos
-            ctypes.windll.user32.ScreenToClient(self.window_handle, ctypes.byref(point))
-            return (point.x, point.y)
+            wx, wy = self.get_rect()[:2]
+            return (self.silent_xpos - wx, self.silent_ypos - wy)
 
     def in_rect(self, rect_area):
         """
