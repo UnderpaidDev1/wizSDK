@@ -51,18 +51,18 @@ async def unregister_all():
 class Client(DeviceContext, Keyboard, Window):
     """
     Main class for wizSDK.
-    
+
     Example:
         .. code-block:: py
-        
+
             # registers a new client
             player = client.register(name="My Bot")
             await player.activate_hooks()
-            
-    
+
+
     """
 
-    def __init__(self, handle=None):
+    def __init__(self, handle=None, silent_mouse=False):
         # Inherit all methods from Parent Classes
         super().__init__(handle)
         self.window_handle = handle
@@ -71,24 +71,26 @@ class Client(DeviceContext, Keyboard, Window):
 
         self._default_image_folder = IMAGE_FOLDER
         self.walker = None
-        self.mouse = Mouse(handle)
+        self.silent_mouse = silent_mouse
+        self.mouse = None
 
         self._last_health = 99_999
         self._last_mana = 99_999
 
     @classmethod
-    def register(cls, nth=0, name=None, handle=None):
+    def register(cls, nth=0, name=None, handle=None, silent_mouse:bool = False):
         """
         Assigns the instance to a wizard101 window. (Required before using any other SDK methods)
-        
+
         Args:
             nth (int, optional): Index of the wizard101 client to use (if there's more than one)
             name (str, optional): Name to prepend to the window title. Used for identifying which windows are controlled.
-            
+            silent_mouse: When enabled, moves the mouse without taking control of the actual cursor
         """
         client = cls()
         global all_clients
 
+        client.silent_mouse = silent_mouse
         if handle:
             client.window_handle = handle
         else:
@@ -110,7 +112,7 @@ class Client(DeviceContext, Keyboard, Window):
 
         client.walker = wizwalker.Client(client.window_handle)
 
-        client.mouse = Mouse(client.window_handle)
+        client.mouse = Mouse(client.window_handle, client.silent_mouse, client.walker)
 
         if name:
             client.set_name(name)
@@ -119,21 +121,33 @@ class Client(DeviceContext, Keyboard, Window):
 
     async def activate_hooks(self, *hook_names):
         """
-        Activate a number of hooks or pass None/no args to activate all
-        
+        Activate a number of hooks or pass None/no args to activate all (excluding special hooks like "mouseless_cursor_move")
+
         Args:
             hook_names: The hooks to activate
-        
+
         Examples:
             .. code-block:: py
-            
+
                 # activates player_struct and player_stat_struct
                 await activate_hooks("player_struct", "player_stat_struct")
-                
-                # activates all hooks
+
+                # activates all hooks (excluding special hooks like "mouseless_cursor_move")
                 await activate_hooks()
         """
-        await self.walker.activate_hooks(*hook_names)
+        hooks = hook_names
+        if len(hook_names) == 0:
+            hooks = tuple([h for h in self.walker.get_hooks() if h != "mouseless_cursor_move"])
+
+        await self.walker.activate_hooks(*hooks)
+        await self.send_key("d")
+        await self.send_key("a")
+
+    async def activate_all_hooks(self):
+        """
+        Activate all hooks (including special hooks like "mouseless_cursor_move")
+        """
+        await self.walker.activate_hooks()
         await self.send_key("d")
         await self.send_key("a")
 
@@ -178,9 +192,9 @@ class Client(DeviceContext, Keyboard, Window):
         return 1
 
     async def wait(self, seconds: float):
-        """ 
+        """
         Alias for asyncio.sleep()
-        
+
         Args:
             seconds (float): number of seconds to "sleep"
         """
@@ -194,7 +208,7 @@ class Client(DeviceContext, Keyboard, Window):
     async def get_health(self) -> int:
         """
         Gets health value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
-        
+
         Returns:
             The health value of the player as an int
         """
@@ -208,7 +222,7 @@ class Client(DeviceContext, Keyboard, Window):
     async def get_mana(self) -> int:
         """
         Gets mana value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
-        
+
         Returns:
             The mana value of the player as an int
         """
@@ -222,7 +236,7 @@ class Client(DeviceContext, Keyboard, Window):
     def is_crown_shop(self) -> bool:
         """
         Detects if the crown shop is open by matching a red pixel in the "close" icon.
-        
+
         Returns:
             bool: True if the menu is open / False otherwise
         """
@@ -231,7 +245,7 @@ class Client(DeviceContext, Keyboard, Window):
     def is_idle(self):
         """
         Detects if the player is idle (out of loading and not in battle) by matching pixels in the spellbook.
-        
+
         Returns:
             bool: True if the player is idle / False otherwise
         """
@@ -250,7 +264,7 @@ class Client(DeviceContext, Keyboard, Window):
     def is_dialog_more(self):
         """
         Detects if the dialog (from NPCs etc.) is open by matching pixels in the "more" or "done" button.
-        
+
         Returns:
             bool: True if the dialog menu is open / False otherwise
         """
@@ -262,7 +276,7 @@ class Client(DeviceContext, Keyboard, Window):
         """
         DEPRECATED:
         Detects if the player's health is low by matching a red pixel in the lower third of the globe.
-        
+
         Returns:
             bool: is the health low
         """
@@ -276,7 +290,7 @@ class Client(DeviceContext, Keyboard, Window):
         """
         DEPRECATED:
         Detects if the player's mana is low by matching a blue pixel in the lower third of the globe.
-        
+
         Returns:
             bool: is the mana low
         """
@@ -289,7 +303,7 @@ class Client(DeviceContext, Keyboard, Window):
     def is_press_x(self):
         """
         Detects if the "press x" prompt is present by matching the "x" image.
-        
+
         Returns:
             bool: "press X" has been found
         """
@@ -300,7 +314,7 @@ class Client(DeviceContext, Keyboard, Window):
     def get_confirm(self):
         """
         Detects if a "confirm" prompt is open (either from teleporting a friend or exiting an unfinished dungeon). It does this by matching a "confirm" image.
-        
+
         Returns:
             tuple: (x, y) where the confirm button has been found
         """
@@ -316,7 +330,7 @@ class Client(DeviceContext, Keyboard, Window):
     async def get_backpack_space_left(self) -> Optional[int]:
         """
         Gets the backpack space left. Will try to refresh the value by quickly opening and closing the backpack if necessary. Returns None if it wasn't able to get the value.
-        
+
         Returns:
             space left in the backpack, None if it's not able to get the value.
         """
@@ -353,11 +367,11 @@ class Client(DeviceContext, Keyboard, Window):
     async def use_potion_if_needed(self, health=1000, mana=20):
         """
         Clicks on a potion if health or mana values drop below the settings
-        
+
         Args:
             health: Health value threshold. Potion will be used if health value drops below
             mana:   Mana value threshold. Potion will be used if mana value drops below
-        
+
         Returns:
             None
         """
@@ -378,10 +392,10 @@ class Client(DeviceContext, Keyboard, Window):
         """
         Waits for player to have gone through the loading screen.
         If this function is called too late and the player is already out of the loading screen, it will wait indefinitely.
-        
+
         Args:
             timeout (optional): value in seconds to timeout if it hasn't finished yet. Defaults to None
-            
+
         Returns:
             True if the function completed successfully, False if the function timed out.
         """
@@ -411,12 +425,12 @@ class Client(DeviceContext, Keyboard, Window):
         # Wait for press X, or more/done button
         """
         Goes through the prompts of the dialog ("press x" or "more"/"continue"). Waits for "press x" or the dialog box before starting.
-        
+
         Args:
             times (int): Defaults to 1
                 The number of times to repeat. (When going through quests, you might need to set this to 2. There's one to hand in the quest, the second to get the next quest)
             timeout (optional): value in seconds to timeout if it hasn't finished yet. Defaults to None
-            
+
         Returns:
             True if the function completed successfully, False if the function timed out.
         """
@@ -450,13 +464,13 @@ class Client(DeviceContext, Keyboard, Window):
     async def logout_and_in(self, confirm=False, *, confirm_timeout=None, timeout=None):
         """
         Logs the user out and then logs it in again.
-        
+
         Args:
             confirm (bool, optional): Should the bot wait for a "confirm" prompt before continuing. Defaults to False
                 Set to True if logging out durring a battle or to exit an unfinished dungeon.
             confirm_timeout: timeout argument for the ``click_confirm`` task. Defaults to None
             timeout: time in seconds before the function times out. Defaults to None
-        
+
         Returns:
             True if the function completed successfully, False if the function timed out.
         """
@@ -492,10 +506,10 @@ class Client(DeviceContext, Keyboard, Window):
     async def press_x(self, *, timeout=None):
         """
         Waits for the "press x" prompt and sends the "X" key.
-        
+
         Args:
             timeout (optional): value in seconds to timeout if it hasn't finished yet. Defaults to None
-            
+
         Returns:
             True if the function completed successfully, False if the function timed out.
         """
@@ -515,10 +529,10 @@ class Client(DeviceContext, Keyboard, Window):
     async def click_confirm(self, *, timeout=None):
         """
         Waits for the "confirm" prompt, and clicks "confirm"
-        
+
         Args:
             timeout (optional): value in seconds to timeout if it hasn't finished yet. Defaults to None
-            
+
         Returns:
             True if the function completed successfully, False if the function timed out.
         """
@@ -548,7 +562,7 @@ class Client(DeviceContext, Keyboard, Window):
         """
         Gets the X, Y, Z coordinates to the quest destination
         Requires the ``quest_struct`` hook to be activated
-        
+
         Returns:
             tuple: (X, Y, Z) value of the quest goal location.
         """
@@ -558,7 +572,7 @@ class Client(DeviceContext, Keyboard, Window):
         """
         Fetches the player's XYZYaw location
         Requires the `player_struct` hook to be activated
-        
+
         Returns:
             XYZYaw: (X, Y, Z, Yaw) tuple values of the player's position and direction.
         """
@@ -571,7 +585,7 @@ class Client(DeviceContext, Keyboard, Window):
         Teleports to XYZYaw location
         Will return immediately if player movement is locked
         Requires the ``player_struct`` hook to be activated
-        
+
         Args:
             location (XYZYaw): location to move to
         """
@@ -587,10 +601,10 @@ class Client(DeviceContext, Keyboard, Window):
         Will _not_ work if there are obstacles in the way. Ideal for short distances
         Will return immediately if player movement is locked
         Requires the `player_struct` hook to be activated.
-        
-   
+
+
         Args:
-            location (XYZYaw): The location to walk to. 
+            location (XYZYaw): The location to walk to.
                 (Only the x and y value will actually be used)
             mount_speed (float): mount speed multiplier. Defaults to 1.4 (40% speed mount).
                 Default can be changed by setting the ``wizsdk.client.DEFAULT_MOUNT_SPEED`` value
@@ -611,11 +625,11 @@ class Client(DeviceContext, Keyboard, Window):
         Completes a set of actions to teleport to a friend.
         The friend must have the proper symbol next to it.
         The symbol must match the image passed as 'match_img'.
-        
+
         Args:
             match_img: A string of the image file name, or a list of bytes returned by ``Client.get_image``
                 The friend icon to find to select which friend to teleport to.
-        
+
         Returns:
             bool: Whether the friend was found or not.
         """
@@ -673,10 +687,10 @@ class Client(DeviceContext, Keyboard, Window):
     def get_battle(self, name: str = None) -> Battle:
         """
         Fetch a ``battle`` associated with the client
-        
+
         Args:
-            name (str): Name of battle for logging purposes. 
-        
+            name (str): Name of battle for logging purposes.
+
         Returns:
             Battle: object with battle methods linked to this client
         """
@@ -687,12 +701,12 @@ class Client(DeviceContext, Keyboard, Window):
     ) -> Card:
         """
         Searches spell area for an image matching ``spell_name``. An additional check to see if the spell is grayed out is done by default.
-        
+
         Args:
             spell_name (str): The name of the spell as you have it saved in your spells image folder.
             threshold (float): How precise the match should be. The lower this value, the more exact the match will be.
             ignore_gray_detection (bool): should the gray detection be ignored. defaults to False
-        
+
         Returns:
             int: x positions of spell if found, None otherwise
         """
@@ -751,17 +765,17 @@ class Client(DeviceContext, Keyboard, Window):
     async def autocast(self, *spells: str, target=None):
         """
         Short-hand for ``find_spell`` followed by ``cast_spell``. Finds and casts spells. If 2 spells are provided, it will enchant spell 2 with spell 1. If target is provided, it will click the target. If any of the spells are not found, this function exits with False.
-        
+
         Args:
             spells: provide up to 2 spell arguments
             target (int, optional): the target to cast the spell on. See ``Card.cast``
-        
+
         Returns:
             True if all spells were found, False otherwise
-            
+
         Examples:
             .. code-block:: py
-            
+
                 player = Client.register(name="Bot")
                 battle = player.get_battle("Test")
                 # Loop
@@ -797,16 +811,17 @@ class Client(DeviceContext, Keyboard, Window):
 
 
 def register_clients(
-    n_handles_expected: int, names: list = [], confirm_position: bool = False
+    n_handles_expected: int, names: list = [], confirm_position: bool = False, silent_mouse: bool = False
 ) -> list:
     """
     Register multiple clients, sorted from left to right, top to bottom.
-    
+
     Args:
         n_handles_expected (int): the expected # of wiz windows opened. Use -1 for undetermined
         names (list): A list of strings that will serve as the names of the windows
         confirm_position (bool): prompt the user to confirm the windows order before continuing
-    
+        silent_mouse: When enabled, moves the mouse without taking control of the actual cursor
+
     Returns:
         client_list (list): A list populated with ``Client`` instances
     """
@@ -829,7 +844,7 @@ def register_clients(
             names.append(None)
 
         # Register and order the windows from left to right, top to bottom
-        w = [Client.register(handle=handles[i]) for i in range(n_handles)]
+        w = [Client.register(handle=handles[i], silent_mouse=silent_mouse) for i in range(n_handles)]
 
         # Sort
         def sort_func(win):
