@@ -78,7 +78,7 @@ class Client(DeviceContext, Keyboard, Window):
         self._last_mana = 99_999
 
     @classmethod
-    def register(cls, nth=0, name=None, handle=None, silent_mouse:bool = False):
+    def register(cls, nth=0, name=None, handle=None, silent_mouse: bool = False):
         """
         Assigns the instance to a wizard101 window. (Required before using any other SDK methods)
 
@@ -137,7 +137,9 @@ class Client(DeviceContext, Keyboard, Window):
         """
         hooks = hook_names
         if len(hook_names) == 0:
-            hooks = tuple([h for h in self.walker.get_hooks() if h != "mouseless_cursor_move"])
+            hooks = tuple(
+                [h for h in self.walker.get_hooks() if h != "mouseless_cursor_move"]
+            )
 
         await self.walker.activate_hooks(*hooks)
         await self.send_key("d")
@@ -633,7 +635,8 @@ class Client(DeviceContext, Keyboard, Window):
         Returns:
             bool: Whether the friend was found or not.
         """
-        self.set_active()
+        if not self.silent_mouse:
+            self.set_active()
         # Check if friends already opened (and close it)
         while self.pixel_matches_color((780, 364), (230, 0, 0), 40):
             await self.mouse.click(780, 364, duration=0.1)
@@ -711,7 +714,7 @@ class Client(DeviceContext, Keyboard, Window):
             int: x positions of spell if found, None otherwise
         """
         # Move into the window if the window isn't active
-        if not self.is_active():
+        if not self.silent_mouse and not self.is_active():
             self.set_active()
             await self.mouse.move_to(100, 100, duration=0.2)
         else:
@@ -811,7 +814,10 @@ class Client(DeviceContext, Keyboard, Window):
 
 
 def register_clients(
-    n_handles_expected: int, names: list = [], confirm_position: bool = False, silent_mouse: bool = False
+    n_handles_expected: int,
+    names: list = [],
+    confirm_position: bool = False,
+    silent_mouse: bool = False,
 ) -> list:
     """
     Register multiple clients, sorted from left to right, top to bottom.
@@ -844,7 +850,10 @@ def register_clients(
             names.append(None)
 
         # Register and order the windows from left to right, top to bottom
-        w = [Client.register(handle=handles[i], silent_mouse=silent_mouse) for i in range(n_handles)]
+        w = [
+            Client.register(handle=handles[i], silent_mouse=silent_mouse)
+            for i in range(n_handles)
+        ]
 
         # Sort
         def sort_func(win):
