@@ -503,7 +503,7 @@ dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
 
 [[package]]
 name = "wizwalker"
-version = "0.16.2"
+version = "0.16.4"
 description = "Automation bot for wizard101"
 category = "main"
 optional = false
@@ -524,7 +524,7 @@ terminaltables = ">=3.1.0,<4.0.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "489e79c45a0395c685a0c539f31bdc8e0b6937c73bd93ea5b6dcf7bf7c4cebc4"
+content-hash = "57fa49eda369b998708d8c81cdcb6026e0c1db309e6af18f3a0136f98d8aa144"
 
 [metadata.files]
 aioconsole = [
@@ -790,6 +790,6 @@ win32-setctime = [
     {file = "win32_setctime-1.0.3.tar.gz", hash = "sha256:4e88556c32fdf47f64165a2180ba4552f8bb32c1103a2fafd05723a0bd42bd4b"},
 ]
 wizwalker = [
-    {file = "wizwalker-0.16.2-py3-none-any.whl", hash = "sha256:e57e8e78e26a4e1854a0b946f7f572389595a3709c5a003528e35464cb704910"},
-    {file = "wizwalker-0.16.2.tar.gz", hash = "sha256:891a13764ea3b1ea95225b7fa32e508c9f600438a90731d9cc047d3054616798"},
+    {file = "wizwalker-0.16.4-py3-none-any.whl", hash = "sha256:00cd9e44f3880a530aa690262c3e6e36f9170a48f4aa381b6c8b2d2d1baa1f70"},
+    {file = "wizwalker-0.16.4.tar.gz", hash = "sha256:a7833dc182e14b23741ffbcb7d0094029db1e72dd462153bf71ff3aa0aa04654"},
 ]
