@@ -270,7 +270,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "pymem"
-version = "1.3"
+version = "1.8"
 description = "pymem: python memory access made easy"
 category = "main"
 optional = false
@@ -503,7 +503,7 @@ dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
 
 [[package]]
 name = "wizwalker"
-version = "0.17.2"
+version = "0.17.4"
 description = "Automation bot for wizard101"
 category = "main"
 optional = false
@@ -518,13 +518,13 @@ click = ">=7.1.2,<8.0.0"
 click_default_group = ">=1.2.2,<2.0.0"
 janus = ">=0.6.1,<0.7.0"
 loguru = ">=0.5.1,<0.6.0"
-pymem = "1.3"
+pymem = "1.8"
 terminaltables = ">=3.1.0,<4.0.0"
 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "57fa49eda369b998708d8c81cdcb6026e0c1db309e6af18f3a0136f98d8aa144"
+content-hash = "cc45192b229d975177a32f051d8d85e5166501462d3b1c0ea1f269a27c8d959a"
 
 [metadata.files]
 aioconsole = [
@@ -720,7 +720,8 @@ pygments = [
     {file = "Pygments-2.8.1.tar.gz", hash = "sha256:2656e1a6edcdabf4275f9a3640db59fd5de107d88e8663c5d4e9a0fa62f77f94"},
 ]
 pymem = [
-    {file = "Pymem-1.3.tar.gz", hash = "sha256:5f972fb9edbd80a6de97084c1197dc44783189698d1fecad0788b6558764cea5"},
+    {file = "Pymem-1.8-py3-none-any.whl", hash = "sha256:6e2f010adae753dfbaa188c0c5214687540e0dd6b9626def86673ac4f124e73a"},
+    {file = "Pymem-1.8.tar.gz", hash = "sha256:dd319e0896c470325d194431c29009dc0a6ee614f11faad07fb6d649ec1436c6"},
 ]
 pyparsing = [
     {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},
@@ -790,6 +791,6 @@ win32-setctime = [
     {file = "win32_setctime-1.0.3.tar.gz", hash = "sha256:4e88556c32fdf47f64165a2180ba4552f8bb32c1103a2fafd05723a0bd42bd4b"},
 ]
 wizwalker = [
-    {file = "wizwalker-0.16.4-py3-none-any.whl", hash = "sha256:00cd9e44f3880a530aa690262c3e6e36f9170a48f4aa381b6c8b2d2d1baa1f70"},
-    {file = "wizwalker-0.16.4.tar.gz", hash = "sha256:a7833dc182e14b23741ffbcb7d0094029db1e72dd462153bf71ff3aa0aa04654"},
+    {file = "wizwalker-0.17.4-py3-none-any.whl", hash = "sha256:0a125fa4fa7e9db980a319d498b6993aa10644deaf21147b882643fd0e906b71"},
+    {file = "wizwalker-0.17.4.tar.gz", hash = "sha256:9ceae95c50517a983e4d96bb9991b75c4287b30b095734097f446fc77a15f901"},
 ]
