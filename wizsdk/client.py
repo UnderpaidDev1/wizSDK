@@ -75,7 +75,18 @@ class Client(DeviceContext, Keyboard, Window):
         self.mouse = None
 
         self._last_health = 99_999
+        self._last_health_max = 99_999
+        self._last_health_percentage = 99_999
         self._last_mana = 99_999
+        self._last_mana_max = 99_999
+        self._last_mana_percentage = 99_999
+        self._level = 99_999
+        self._gold = 99_999
+        self._energy = 99_999
+        self._fishing_experience = 99_999
+        self._fishing_level = 99_999
+        self._gardening_experience = 99_999
+        self._gardening_level = 99_999
 
     @classmethod
     def register(cls, nth=0, name=None, handle=None, silent_mouse: bool = False):
@@ -207,6 +218,32 @@ class Client(DeviceContext, Keyboard, Window):
     STATE DETECTION
     """
 
+    async def get_player_level(self) -> int:
+        """
+        Gets player level value from memory.
+
+        Returns:
+            The level of the player as an int
+        """
+
+        mem_level = await self.walker.level()
+        self._level = mem_level
+
+        return self._level
+
+    async def get_gold(self) -> int:
+        """
+        Gets gold value from memory.
+
+        Returns:
+            The player's gold value as an int
+        """
+
+        mem_gold = await self.walker.gold()
+        self._gold = mem_gold
+
+        return self._gold
+
     async def get_health(self) -> int:
         """
         Gets health value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
@@ -221,6 +258,36 @@ class Client(DeviceContext, Keyboard, Window):
 
         return self._last_health
 
+    async def get_health_max(self) -> int:
+        """
+        Gets maximum health value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
+
+        Returns:
+            The health value of the player as an int
+        """
+
+        mem_health_max = await self.walker.max_health()
+        if (mem_health_max != None) and (mem_health_max >= 0) and (mem_health_max < 20_000):
+            self._last_health_max = mem_health_max
+
+        return self._last_health_max
+
+    async def get_health_percentage(self) -> int:
+        """
+        Gets health, and max health value from memory then divides them. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
+
+        Returns:
+            The health percentage of the player as an int rounded down to the first decimal.
+        """
+
+        mem_health = await self.walker.health()
+        mem_health_max = await self.walker.max_health()
+        if (mem_health != None) and (mem_health >= 0) and (mem_health < 20_000):
+            health_percentage = ((mem_health / mem_health_max) * 100)
+            self._last_health_percentage = round(health_percentage, 1)
+
+        return self._last_health_percentage
+
     async def get_mana(self) -> int:
         """
         Gets mana value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
@@ -234,6 +301,101 @@ class Client(DeviceContext, Keyboard, Window):
             self._last_mana = mem_mana
 
         return self._last_mana
+
+    async def get_mana_max(self) -> int:
+        """
+        Gets maximum mana value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
+
+        Returns:
+            The maximum mana value of the player as an int
+        """
+
+        mem_mana_max = await self.walker.max_mana()
+        if (mem_mana_max != None) and (mem_mana_max >= 0) and (mem_mana_max < 20_000):
+            self._last_mana_max = mem_mana_max
+
+        return self._last_mana_max
+
+    async def get_mana_percentage(self) -> int:
+        """
+        Gets health, and max health value from memory then divides them. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
+
+        Returns:
+            The health percentage of the player as an int rounded down to the first decimal.
+        """
+
+        mem_mana = await self.walker.mana()
+        mem_mana_max = await self.walker.max_mana()
+        if (mem_mana != None) and (mem_mana >= 0) and (mem_mana < 20_000):
+            mana_percentage = ((mem_mana / mem_mana_max) * 100)
+            self._last_mana_percentage = round(mana_percentage, 1)
+
+        return self._last_mana_percentage
+
+    async def get_energy(self) -> int:
+        """
+        Gets energy value from memory.
+
+        Returns:
+            The player's energy value as an int
+        """
+
+        mem_energy = await self.walker.energy()
+        self._energy = mem_energy
+
+        return self._energy
+
+    async def get_fishing_experience(self) -> int:
+        """
+        Gets fishing experience value from memory.
+
+        Returns:
+            The player's fishing experience value as an int
+        """
+
+        mem_fishing_experience = await self.walker.fishing_experience()
+        self._fishing_experience = mem_fishing_experience
+
+        return self._fishing_experience
+
+    async def get_fishing_level(self) -> int:
+        """
+        Gets fishing level value from memory.
+
+        Returns:
+            The player's fishing level value as an int
+        """
+
+        mem_fishing_level = await self.walker.fishing_level()
+        self._fishing_level = mem_fishing_level
+
+        return self._fishing_level
+
+    async def get_gardening_level(self) -> int:
+        """
+        Gets gardening level value from memory.
+
+        Returns:
+            The player's gardening level value as an int
+        """
+
+        mem_gardening_level = await self.walker.gardening_level()
+        self._gardening_level = mem_gardening_level
+
+        return self._gardening_level
+
+    async def get_gardening_experience(self) -> int:
+        """
+        Gets gardening experience value from memory.
+
+        Returns:
+            The player's gardening experience value as an int
+        """
+
+        mem_gardening_experience = await self.walker.gardening_experience()
+        self._gardening_experience = mem_gardening_experience
+
+        return self._gardening_experience
 
     def is_crown_shop(self) -> bool:
         """
@@ -682,6 +844,20 @@ class Client(DeviceContext, Keyboard, Window):
         quest_xyz = await self.walker.quest_xyz()
         yaw = calculate_perfect_yaw(xyz, quest_xyz)
         await self.walker.set_yaw(yaw)
+
+    async def is_move_locked(self):
+        """
+        Detects if player is locked in combat
+
+        Returns:
+            bool: Whether player is move locked by combat or not.
+        """
+
+        move_lock = await self.walker.move_lock()
+        if move_lock is True:
+            return True
+        else:
+            return False
 
     """
     BATTLE ACTIONS & METHODS
