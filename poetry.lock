@@ -503,7 +503,7 @@ dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
 
 [[package]]
 name = "wizwalker"
-version = "0.17.0"
+version = "0.17.2"
 description = "Automation bot for wizard101"
 category = "main"
 optional = false
