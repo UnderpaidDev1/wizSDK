@@ -343,6 +343,72 @@ If this function is called too late and the player is already out of the loading
 </dd></dl>
 
 <dl class="py method">
+<dt id="wizsdk.Client.get_energy">
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_energy</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets energy value from memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The player’s energy value as an int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.Client.get_fishing_experience">
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_fishing_experience</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_fishing_experience" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets fishing experience value from memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The player’s fishing experience value as an int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.Client.get_fishing_level">
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_fishing_level</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_fishing_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets fishing level value from memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The player’s fishing level value as an int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.Client.get_gardening_experience">
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_gardening_experience</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_gardening_experience" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets gardening experience value from memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The player’s gardening experience value as an int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.Client.get_gardening_level">
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_gardening_level</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_gardening_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets gardening level value from memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The player’s gardening level value as an int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.Client.get_gold">
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_gold</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_gold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets gold value from memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The player’s gold value as an int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="wizsdk.Client.get_health">
 <em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_health</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_health" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets health value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn’t run.</p>
@@ -354,12 +420,67 @@ If this function is called too late and the player is already out of the loading
 </dd></dl>
 
 <dl class="py method">
+<dt id="wizsdk.Client.get_health_max">
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_health_max</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_health_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets maximum health value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn’t run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The health value of the player as an int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.Client.get_health_percentage">
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_health_percentage</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_health_percentage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets health, and max health value from memory then divides them. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn’t run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The health percentage of the player as an int rounded down to the first decimal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="wizsdk.Client.get_mana">
 <em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_mana</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_mana" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets mana value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn’t run.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The mana value of the player as an int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.Client.get_mana_max">
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_mana_max</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_mana_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets maximum mana value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn’t run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The maximum mana value of the player as an int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.Client.get_mana_percentage">
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_mana_percentage</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_mana_percentage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets health, and max health value from memory then divides them. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn’t run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The health percentage of the player as an int rounded down to the first decimal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.Client.get_player_level">
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_player_level</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_player_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets player level value from memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The level of the player as an int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -477,6 +598,20 @@ Detects if the player’s mana is low by matching a blue pixel in the lower thir
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>is the mana low</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.Client.is_move_locked">
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">is_move_locked</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Client.is_move_locked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detects if player is locked in combat</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Whether player is move locked by combat or not.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>bool</p>
