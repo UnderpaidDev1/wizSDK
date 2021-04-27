@@ -82,7 +82,7 @@ class Client(DeviceContext, Keyboard, Window):
         self._last_mana_percentage = 99_999
         self._level = 99_999
         self._gold = 99_999
-        self._energy = 99_999
+        self._energy_max = 99_999
         self._fishing_experience = 99_999
         self._fishing_level = 99_999
         self._gardening_experience = 99_999
@@ -332,18 +332,18 @@ class Client(DeviceContext, Keyboard, Window):
 
         return self._last_mana_percentage
 
-    async def get_energy(self) -> int:
+    async def get_energy_max(self) -> int:
         """
-        Gets energy value from memory.
+        Gets players maximum energy value from memory.
 
         Returns:
-            The player's energy value as an int
+            The player's maximum energy value as an int
         """
 
-        mem_energy = await self.walker.energy()
-        self._energy = mem_energy
+        mem_energy_max = await self.walker.energy()
+        self._energy_max = mem_energy_max
 
-        return self._energy
+        return self._energy_max
 
     async def get_fishing_experience(self) -> int:
         """
