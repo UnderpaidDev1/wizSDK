@@ -439,8 +439,8 @@ class Client(DeviceContext, Keyboard, Window):
         Returns:
             bool: True if the dialog menu is open / False otherwise
         """
-        more_lower_right = self.pixel_matches_color((669, 611), (112, 32, 54), 15)
-        more_top_left = self.pixel_matches_color((585, 609), (115, 32, 56), 15)
+        more_lower_right = self.pixel_matches_color((674, 621), (110, 30, 53), 15)
+        more_top_left = self.pixel_matches_color((592, 613), (111, 31, 52), 15)
         return more_lower_right and more_top_left
 
     def is_health_low(self):
