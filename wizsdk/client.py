@@ -20,7 +20,7 @@ from .battle import Battle
 from .card import Card
 
 # rectangles defined as (x, y, width, height)
-AREA_FRIENDS = (625, 65, 20, 240)
+AREA_FRIENDS = (623, 63, 35, 250)
 AREA_SPELLS = (245, 290, 370, 70)
 AREA_CONFIRM = (355, 370, 100, 70)
 
@@ -267,7 +267,11 @@ class Client(DeviceContext, Keyboard, Window):
         """
 
         mem_health_max = await self.walker.max_health()
-        if (mem_health_max != None) and (mem_health_max >= 0) and (mem_health_max < 20_000):
+        if (
+            (mem_health_max != None)
+            and (mem_health_max >= 0)
+            and (mem_health_max < 20_000)
+        ):
             self._last_health_max = mem_health_max
 
         return self._last_health_max
@@ -283,7 +287,7 @@ class Client(DeviceContext, Keyboard, Window):
         mem_health = await self.walker.health()
         mem_health_max = await self.walker.max_health()
         if (mem_health != None) and (mem_health >= 0) and (mem_health < 20_000):
-            health_percentage = ((mem_health / mem_health_max) * 100)
+            health_percentage = (mem_health / mem_health_max) * 100
             self._last_health_percentage = round(health_percentage, 1)
 
         return self._last_health_percentage
@@ -327,7 +331,7 @@ class Client(DeviceContext, Keyboard, Window):
         mem_mana = await self.walker.mana()
         mem_mana_max = await self.walker.max_mana()
         if (mem_mana != None) and (mem_mana >= 0) and (mem_mana < 20_000):
-            mana_percentage = ((mem_mana / mem_mana_max) * 100)
+            mana_percentage = (mem_mana / mem_mana_max) * 100
             self._last_mana_percentage = round(mana_percentage, 1)
 
         return self._last_mana_percentage
@@ -413,17 +417,20 @@ class Client(DeviceContext, Keyboard, Window):
         Returns:
             bool: True if the player is idle / False otherwise
         """
-        spellbook_yellow = self.pixel_matches_color(
-            (781, 551), (255, 251, 64), tolerance=30
-        )
-        spellbook_brown = self.pixel_matches_color(
-            (728, 587), (79, 29, 29), tolerance=30
-        )
+        # spellbook_yellow = self.pixel_matches_color(
+        #     (781, 551), (255, 251, 64), tolerance=30
+        # )
+        # spellbook_brown = self.pixel_matches_color(
+        #     (728, 587), (79, 29, 29), tolerance=30
+        # )
 
-        spellbook_gray = self.pixel_matches_color(
-            (747, 538), (27, 47, 63), tolerance=30
-        )
-        return spellbook_brown and spellbook_yellow and spellbook_gray
+        # spellbook_gray = self.pixel_matches_color(
+        #     (747, 538), (27, 47, 63), tolerance=30
+        # )
+        # print(spellbook_brown, spellbook_yellow, spellbook_gray)
+        # return spellbook_brown and spellbook_yellow and spellbook_gray
+        spell_book_area = self.get_image(region=(725, 555, 60, 60))
+        return match_image(spell_book_area, packaged_img("spellbook.png"))
 
     def is_dialog_more(self):
         """
@@ -800,12 +807,16 @@ class Client(DeviceContext, Keyboard, Window):
         if not self.silent_mouse:
             self.set_active()
         # Check if friends already opened (and close it)
-        while self.pixel_matches_color((780, 364), (230, 0, 0), 40):
-            await self.mouse.click(780, 364, duration=0.1)
+        friend_icon_area = self.get_image(region=(750, 35, 30, 30))
+        while not match_image(
+            friend_icon_area, packaged_img("friendlist.png"), threshold=0.05
+        ):
+            await self.send_key("F")
             await self.wait(0.2)
+            friend_icon_area = self.get_image(region=(775, 30, 40, 40))
 
         # Open friend menu
-        await self.mouse.click(780, 50, duration=0.2)
+        await self.send_key("F")
         await self.wait(0.2)
 
         # Find friend that matches friend match_img

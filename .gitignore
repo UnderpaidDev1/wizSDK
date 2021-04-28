@@ -5,6 +5,7 @@ venv
 test
 _spells
 _icons
+_captures
 pyvenv.cfg
 __main__.py
 **/__pycache__
