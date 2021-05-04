@@ -152,7 +152,7 @@ class Battle(DeviceContext):
         while not self._is_turn() and not self.is_idle():
             await asyncio.sleep(1)
 
-        if self.is_idle():
+        if not await self.client.walker.move_lock():
             self.log("Battle has finished")
 
             with suppress(HookNotActive):

@@ -430,7 +430,9 @@ class Client(DeviceContext, Keyboard, Window):
         # print(spellbook_brown, spellbook_yellow, spellbook_gray)
         # return spellbook_brown and spellbook_yellow and spellbook_gray
         spell_book_area = self.get_image(region=(725, 555, 60, 60))
-        return match_image(spell_book_area, packaged_img("spellbook.png"))
+        return match_image(
+            spell_book_area, packaged_img("spellbook.png"), threshold=0.05
+        )
 
     def is_dialog_more(self):
         """
