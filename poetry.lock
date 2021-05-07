@@ -503,7 +503,7 @@ dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
 
 [[package]]
 name = "wizwalker"
-version = "0.17.6"
+version = "0.17.8"
 description = "Automation bot for wizard101"
 category = "main"
 optional = false
@@ -791,6 +791,6 @@ win32-setctime = [
     {file = "win32_setctime-1.0.3.tar.gz", hash = "sha256:4e88556c32fdf47f64165a2180ba4552f8bb32c1103a2fafd05723a0bd42bd4b"},
 ]
 wizwalker = [
-    {file = "wizwalker-0.17.6-py3-none-any.whl", hash = "sha256:e25230a65a92cf290b2d882183320412bf53e21f124769f67fc52e5b2d89e4e1"},
-    {file = "wizwalker-0.17.6.tar.gz", hash = "sha256:c9e92083c9c8286c65f782817c56c4ec34f0481bdca6a3dce441b4534a90217b"},
+    {file = "wizwalker-0.17.8-py3-none-any.whl", hash = "sha256:d067405f99bc3b3d810e02029ef83dbd9bb1169df782f7fdbdffe3810adadd78"},
+    {file = "wizwalker-0.17.8.tar.gz", hash = "sha256:1f0f75d00c762e909a8b00af1a31e6f4bf502aeaa52500317526cce6906e1de0"},
 ]
