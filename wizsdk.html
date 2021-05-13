@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.4.6
+                1.5.0
               </div>
             
           
@@ -199,21 +199,13 @@
 <dl class="py method">
 <dt id="wizsdk.Client.activate_hooks">
 <em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">activate_hooks</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">hook_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Client.activate_hooks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Activate a number of hooks or pass None/no args to activate all (excluding special hooks like “mouseless_cursor_move”)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>hook_names</strong> – The hooks to activate</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="c1"># activates player_struct and player_stat_struct</span>
-<span class="k">await</span> <span class="n">activate_hooks</span><span class="p">(</span><span class="s2">&quot;player_struct&quot;</span><span class="p">,</span> <span class="s2">&quot;player_stat_struct&quot;</span><span class="p">)</span>
-
-<span class="c1"># activates all hooks (excluding special hooks like &quot;mouseless_cursor_move&quot;)</span>
-<span class="k">await</span> <span class="n">activate_hooks</span><span class="p">()</span>
-</pre></div>
-</div>
+<dd><p>Activate all hooks excluding special hooks like “mouseless_cursor_move”</p>
 </dd></dl>
+
+<dl class="py method">
+<dt id="wizsdk.Client.activate_silent_mouse_hook">
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">activate_silent_mouse_hook</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Client.activate_silent_mouse_hook" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.Client.autocast">
@@ -343,61 +335,6 @@ If this function is called too late and the player is already out of the loading
 </dd></dl>
 
 <dl class="py method">
-<dt id="wizsdk.Client.get_energy_max">
-<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_energy_max</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_energy_max" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets players maximum energy value from memory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The player’s maximum energy value as an int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="wizsdk.Client.get_fishing_experience">
-<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_fishing_experience</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_fishing_experience" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets fishing experience value from memory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The player’s fishing experience value as an int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="wizsdk.Client.get_fishing_level">
-<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_fishing_level</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_fishing_level" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets fishing level value from memory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The player’s fishing level value as an int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="wizsdk.Client.get_gardening_experience">
-<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_gardening_experience</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_gardening_experience" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets gardening experience value from memory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The player’s gardening experience value as an int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="wizsdk.Client.get_gardening_level">
-<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_gardening_level</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_gardening_level" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets gardening level value from memory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The player’s gardening level value as an int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="wizsdk.Client.get_gold">
 <em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_gold</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_gold" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets gold value from memory.</p>
@@ -411,21 +348,17 @@ If this function is called too late and the player is already out of the loading
 <dl class="py method">
 <dt id="wizsdk.Client.get_health">
 <em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_health</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_health" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets health value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn’t run.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The health value of the player as an int</p>
-</dd>
-</dl>
+<dd><p>Gets health value from memory.
+:returns: The health value of the player as an int</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="wizsdk.Client.get_health_max">
 <em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_health_max</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_health_max" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets maximum health value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn’t run.</p>
+<dd><p>Gets maximum health value from memory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The health value of the player as an int</p>
+<dd class="field-odd"><p>The max health value of the player as an int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -444,7 +377,7 @@ If this function is called too late and the player is already out of the loading
 <dl class="py method">
 <dt id="wizsdk.Client.get_mana">
 <em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_mana</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_mana" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets mana value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn’t run.</p>
+<dd><p>Gets mana value from memory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The mana value of the player as an int</p>
@@ -455,7 +388,7 @@ If this function is called too late and the player is already out of the loading
 <dl class="py method">
 <dt id="wizsdk.Client.get_mana_max">
 <em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_mana_max</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_mana_max" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets maximum mana value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn’t run.</p>
+<dd><p>Gets maximum mana value from memory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The maximum mana value of the player as an int</p>
@@ -466,7 +399,7 @@ If this function is called too late and the player is already out of the loading
 <dl class="py method">
 <dt id="wizsdk.Client.get_mana_percentage">
 <em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">get_mana_percentage</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#wizsdk.Client.get_mana_percentage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets health, and max health value from memory then divides them. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn’t run.</p>
+<dd><p>Gets health, and max health value from memory then divides them.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The health percentage of the player as an int rounded down to the first decimal.</p>
@@ -779,12 +712,8 @@ Will return immediately if player movement is locked
 Requires the <cite>player_struct</cite> hook to be activated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>location</strong> (<em>XYZYaw</em>) – The location to walk to.
-(Only the x and y value will actually be used)</p></li>
-<li><p><strong>mount_speed</strong> (<em>float</em>) – mount speed multiplier. Defaults to 1.4 (40% speed mount).
-Default can be changed by setting the <code class="docutils literal notranslate"><span class="pre">wizsdk.client.DEFAULT_MOUNT_SPEED</span></code> value</p></li>
-</ul>
+<dd class="field-odd"><p><strong>location</strong> (<em>XYZYaw</em>) – The location to walk to.
+(Only the x and y value will actually be used)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1120,7 +1049,7 @@ If the mouse is already outside, return</p>
 
 <dl class="py method">
 <dt id="wizsdk.Mouse.wizsdk_client_coords_to_wizwalker">
-<code class="sig-name descname"><span class="pre">wizsdk_client_coords_to_wizwalker</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">x:</span> <span class="pre">int</span></em>, <em class="sig-param"><span class="pre">y:</span> <span class="pre">int)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'int'&gt;</span></em>, <em class="sig-param"><span class="pre">&lt;class</span> <span class="pre">'int'&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#wizsdk.Mouse.wizsdk_client_coords_to_wizwalker" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">wizsdk_client_coords_to_wizwalker</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="headerlink" href="#wizsdk.Mouse.wizsdk_client_coords_to_wizwalker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts WizSDK client coords to wizwalker client coords</p>
 </dd></dl>
 
