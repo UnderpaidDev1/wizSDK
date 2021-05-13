@@ -200,7 +200,7 @@ class DeviceContext(Window):
         else:
             assert (
                 False
-            ), f"Color mode was expected to be length 3 (RGB), but pixel is length {len(pix)} and expected_RGB is length { len(expected_rgb)}"
+            ), f"Color mode was expected to be length 3 (RGB), but pixel is length {len(pixel)} and expected_RGB is length { len(expected_rgb)}"
 
     def is_gray_rect(self, region, threshold=25):
         """

@@ -1,4 +1,5 @@
 # Native imports
+from contextlib import suppress
 import ctypes
 import os, sys
 import asyncio
@@ -8,7 +9,7 @@ from typing import Optional
 import cv2
 import numpy
 import wizwalker
-from wizwalker.utils import calculate_perfect_yaw
+from wizwalker import XYZ
 
 # Custom imports
 from .utils import get_all_wiz_handles, XYZYaw, packaged_img
@@ -74,20 +75,6 @@ class Client(DeviceContext, Keyboard, Window):
         self.silent_mouse = silent_mouse
         self.mouse = None
 
-        self._last_health = 99_999
-        self._last_health_max = 99_999
-        self._last_health_percentage = 99_999
-        self._last_mana = 99_999
-        self._last_mana_max = 99_999
-        self._last_mana_percentage = 99_999
-        self._level = 99_999
-        self._gold = 99_999
-        self._energy_max = 99_999
-        self._fishing_experience = 99_999
-        self._fishing_level = 99_999
-        self._gardening_experience = 99_999
-        self._gardening_level = 99_999
-
     @classmethod
     def register(cls, nth=0, name=None, handle=None, silent_mouse: bool = False):
         """
@@ -118,9 +105,6 @@ class Client(DeviceContext, Keyboard, Window):
         # A window exists, add it to global variable
         all_clients.append(client)
 
-        # Start `_anti_disconnect` task
-        client._anti_disconnect_task = asyncio.create_task(client._anti_disconnect())
-
         client.walker = wizwalker.Client(client.window_handle)
 
         client.mouse = Mouse(client.window_handle, client.silent_mouse, client.walker)
@@ -132,37 +116,28 @@ class Client(DeviceContext, Keyboard, Window):
 
     async def activate_hooks(self, *hook_names):
         """
-        Activate a number of hooks or pass None/no args to activate all (excluding special hooks like "mouseless_cursor_move")
-
-        Args:
-            hook_names: The hooks to activate
-
-        Examples:
-            .. code-block:: py
-
-                # activates player_struct and player_stat_struct
-                await activate_hooks("player_struct", "player_stat_struct")
-
-                # activates all hooks (excluding special hooks like "mouseless_cursor_move")
-                await activate_hooks()
+        Activate all hooks excluding special hooks like "mouseless_cursor_move"
         """
-        hooks = hook_names
-        if len(hook_names) == 0:
-            hooks = tuple(
-                [h for h in self.walker.get_hooks() if h != "mouseless_cursor_move"]
+        if len(hook_names):
+            print(
+                "Specifying hook_names is now deprecated. Use no arguments to activate all hooks (except silent mouse)"
             )
 
-        await self.walker.activate_hooks(*hooks)
+        await self.walker.activate_hooks()
+
         await self.send_key("d")
         await self.send_key("a")
+
+    async def activate_silent_mouse_hook(self):
+        await self.walker.hook_handler.activate_mouseless_cursor_hook()
 
     async def activate_all_hooks(self):
         """
         Activate all hooks (including special hooks like "mouseless_cursor_move")
         """
-        await self.walker.activate_hooks()
-        await self.send_key("d")
-        await self.send_key("a")
+        if self.silent_mouse:
+            await self.activate_silent_mouse_hook()
+        await self.activate_hooks()
 
     def set_name(self, name: str):
         """
@@ -187,20 +162,11 @@ class Client(DeviceContext, Keyboard, Window):
             print(s)
             sys.stdout.flush()
 
-    async def _anti_disconnect(self):
-        while True:
-            # Wait 10 minute
-            await asyncio.sleep(10 * 60)
-            # Sent o key to stay awake
-            await self.send_key("O", 0.1)
-            await self.send_key("O", 0.1)
-
     async def unregister(self):
         """
         Properly unregister hooks and clean up possible ongoing asyncio tasks
         """
         user32.SetWindowTextW(self.window_handle, "Wizard101")
-        self._anti_disconnect_task.cancel()
         await self.walker.close()
         return 1
 
@@ -226,10 +192,7 @@ class Client(DeviceContext, Keyboard, Window):
             The level of the player as an int
         """
 
-        mem_level = await self.walker.level()
-        self._level = mem_level
-
-        return self._level
+        return await self.walker.stats.reference_level()
 
     async def get_gold(self) -> int:
         """
@@ -239,42 +202,26 @@ class Client(DeviceContext, Keyboard, Window):
             The player's gold value as an int
         """
 
-        mem_gold = await self.walker.gold()
-        self._gold = mem_gold
-
-        return self._gold
+        return await self.walker.stats.current_gold()
 
     async def get_health(self) -> int:
         """
-        Gets health value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
-
+        Gets health value from memory.
         Returns:
             The health value of the player as an int
         """
 
-        mem_health = await self.walker.health()
-        if (mem_health != None) and (mem_health >= 0) and (mem_health < 20_000):
-            self._last_health = mem_health
-
-        return self._last_health
+        return await self.walker.stats.current_hitpoints()
 
     async def get_health_max(self) -> int:
         """
-        Gets maximum health value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
-
+        Gets maximum health value from memory.
+        
         Returns:
-            The health value of the player as an int
+            The max health value of the player as an int
         """
 
-        mem_health_max = await self.walker.max_health()
-        if (
-            (mem_health_max != None)
-            and (mem_health_max >= 0)
-            and (mem_health_max < 20_000)
-        ):
-            self._last_health_max = mem_health_max
-
-        return self._last_health_max
+        return await self.walker.stats.max_hitpoints()
 
     async def get_health_percentage(self) -> int:
         """
@@ -284,122 +231,47 @@ class Client(DeviceContext, Keyboard, Window):
             The health percentage of the player as an int rounded down to the first decimal.
         """
 
-        mem_health = await self.walker.health()
-        mem_health_max = await self.walker.max_health()
-        if (mem_health != None) and (mem_health >= 0) and (mem_health < 20_000):
-            health_percentage = (mem_health / mem_health_max) * 100
-            self._last_health_percentage = round(health_percentage, 1)
-
-        return self._last_health_percentage
+        return round(
+            await self.walker.stats.current_hitpoints()
+            / await self.walker.stats.max_hitpoints()
+            * 100,
+            1,
+        )
 
     async def get_mana(self) -> int:
         """
-        Gets mana value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
+        Gets mana value from memory.
 
         Returns:
             The mana value of the player as an int
         """
 
-        mem_mana = await self.walker.mana()
-        if (mem_mana != None) and (mem_mana >= 0) and (mem_mana < 20_000):
-            self._last_mana = mem_mana
-
-        return self._last_mana
+        return await self.walker.stats.current_mana()
 
     async def get_mana_max(self) -> int:
         """
-        Gets maximum mana value from memory. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
+        Gets maximum mana value from memory.
 
         Returns:
             The maximum mana value of the player as an int
         """
 
-        mem_mana_max = await self.walker.max_mana()
-        if (mem_mana_max != None) and (mem_mana_max >= 0) and (mem_mana_max < 20_000):
-            self._last_mana_max = mem_mana_max
-
-        return self._last_mana_max
+        return await self.walker.stats.max_mana()
 
     async def get_mana_percentage(self) -> int:
         """
-        Gets health, and max health value from memory then divides them. For accurate values, only use after finishing a fight or after getting whisps. Returns 99,999 if the stats hook hasn't run.
-
+        Gets health, and max health value from memory then divides them.
+        
         Returns:
             The health percentage of the player as an int rounded down to the first decimal.
         """
 
-        mem_mana = await self.walker.mana()
-        mem_mana_max = await self.walker.max_mana()
-        if (mem_mana != None) and (mem_mana >= 0) and (mem_mana < 20_000):
-            mana_percentage = (mem_mana / mem_mana_max) * 100
-            self._last_mana_percentage = round(mana_percentage, 1)
-
-        return self._last_mana_percentage
-
-    async def get_energy_max(self) -> int:
-        """
-        Gets players maximum energy value from memory.
-
-        Returns:
-            The player's maximum energy value as an int
-        """
-
-        mem_energy_max = await self.walker.energy()
-        self._energy_max = mem_energy_max
-
-        return self._energy_max
-
-    async def get_fishing_experience(self) -> int:
-        """
-        Gets fishing experience value from memory.
-
-        Returns:
-            The player's fishing experience value as an int
-        """
-
-        mem_fishing_experience = await self.walker.fishing_experience()
-        self._fishing_experience = mem_fishing_experience
-
-        return self._fishing_experience
-
-    async def get_fishing_level(self) -> int:
-        """
-        Gets fishing level value from memory.
-
-        Returns:
-            The player's fishing level value as an int
-        """
-
-        mem_fishing_level = await self.walker.fishing_level()
-        self._fishing_level = mem_fishing_level
-
-        return self._fishing_level
-
-    async def get_gardening_level(self) -> int:
-        """
-        Gets gardening level value from memory.
-
-        Returns:
-            The player's gardening level value as an int
-        """
-
-        mem_gardening_level = await self.walker.gardening_level()
-        self._gardening_level = mem_gardening_level
-
-        return self._gardening_level
-
-    async def get_gardening_experience(self) -> int:
-        """
-        Gets gardening experience value from memory.
-
-        Returns:
-            The player's gardening experience value as an int
-        """
-
-        mem_gardening_experience = await self.walker.gardening_experience()
-        self._gardening_experience = mem_gardening_experience
-
-        return self._gardening_experience
+        return round(
+            await self.walker.stats.current_mana()
+            / await self.walker.stats.max_mana()
+            * 100,
+            1,
+        )
 
     def is_crown_shop(self) -> bool:
         """
@@ -508,29 +380,18 @@ class Client(DeviceContext, Keyboard, Window):
             space left in the backpack, None if it's not able to get the value.
         """
 
-        refresh_triggered = False
-        time_awaited = 0
-        interval = 0.1
-        space_used = await self.walker.backpack_space_used()
-        while space_used == None and time_awaited < 1 and self.is_idle():
-            if not refresh_triggered:
-                self.log("Refreshing backpack space value")
-                # Open and close character page to force memory update
+        backpack_data = False
+
+        while not backpack_data:
+            try:
+                backpack_data = await self.walker.backpack_space()
+            except ValueError:
                 await self.send_key("b")
-                await self.send_key("b")
-                refresh_triggered = True
+                await asyncio.sleep(0.2)
 
-            # Wait
-            await self.wait(interval)
-            time_awaited += interval
+        await self.send_key("b")
 
-            # re-try accessing the values
-            space_used = await self.walker.backpack_space_used()
-
-        if space_used == None:
-            return None
-
-        space_total = await self.walker.backpack_space_total()
+        space_used, space_total = backpack_data
         return space_total - space_used
 
     """
@@ -576,14 +437,7 @@ class Client(DeviceContext, Keyboard, Window):
         async def _loading_coro():
             self.log("Awaiting loading")
 
-            base_addr = lambda: self.walker._memory.process.read_int(
-                self.walker._memory.player_struct_addr
-            )
-            player_struct = base_addr()
-
-            # Wait for base_addr to change
-            while player_struct == base_addr():
-                await asyncio.sleep(0.2)
+            self.walker.wait_for_zone_change()
 
             await asyncio.sleep(2)
 
@@ -739,7 +593,7 @@ class Client(DeviceContext, Keyboard, Window):
         Returns:
             tuple: (X, Y, Z) value of the quest goal location.
         """
-        return await self.walker.quest_xyz()
+        return await self.walker.quest_position.position()
 
     async def get_player_location(self) -> XYZYaw:
         """
@@ -749,8 +603,8 @@ class Client(DeviceContext, Keyboard, Window):
         Returns:
             XYZYaw: (X, Y, Z, Yaw) tuple values of the player's position and direction.
         """
-        xyz = await self.walker.xyz()
-        yaw = await self.walker.yaw()
+        xyz = await self.walker.body.position()
+        yaw = await self.walker.body.yaw()
         return XYZYaw(x=xyz.x, y=xyz.y, z=xyz.z, yaw=yaw)
 
     async def teleport_to(self, location: XYZYaw):
@@ -765,7 +619,9 @@ class Client(DeviceContext, Keyboard, Window):
         if await self.walker.move_lock():
             return
 
-        await self.walker.teleport(**location._asdict())
+        await self.walker.teleport(
+            XYZ(location.x, location.y, location.z), location.yaw
+        )
         await self.send_key("W", 0.1)
 
     async def walk_to(self, location: XYZYaw, mount_speed: float = -1):
@@ -779,17 +635,9 @@ class Client(DeviceContext, Keyboard, Window):
         Args:
             location (XYZYaw): The location to walk to.
                 (Only the x and y value will actually be used)
-            mount_speed (float): mount speed multiplier. Defaults to 1.4 (40% speed mount).
-                Default can be changed by setting the ``wizsdk.client.DEFAULT_MOUNT_SPEED`` value
         """
-        if mount_speed == -1:
-            mount_speed = DEFAULT_MOUNT_SPEED
-
-        if mount_speed:
-            wizwalker.client.WIZARD_SPEED = 580 * mount_speed
-
-        if await self.walker.move_lock():
-            return
+        if mount_speed != -1:
+            print("Mound_speed is deprecated. Wizwalker now gets the speed from memory")
 
         await self.walker.goto(location.x, location.y)
 
@@ -853,9 +701,9 @@ class Client(DeviceContext, Keyboard, Window):
         Changes the player's yaw to be facing the quest destination.
         *Note:* depending on your location, this may differ from where your quest arrow is pointing to
         """
-        xyz = await self.walker.xyz()
-        quest_xyz = await self.walker.quest_xyz()
-        yaw = calculate_perfect_yaw(xyz, quest_xyz)
+        xyz = await self.walker.body.position()
+        quest_xyz = await self.walker.quest_position.position()
+        yaw = xyz.yaw(quest_xyz)
         await self.walker.set_yaw(yaw)
 
     async def is_move_locked(self):
@@ -866,11 +714,7 @@ class Client(DeviceContext, Keyboard, Window):
             bool: Whether player is move locked by combat or not.
         """
 
-        move_lock = await self.walker.move_lock()
-        if move_lock is True:
-            return True
-        else:
-            return False
+        return await self.walker.in_battle()
 
     """
     BATTLE ACTIONS & METHODS

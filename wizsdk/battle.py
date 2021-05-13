@@ -1,10 +1,7 @@
 # Native imports
 import sys
 from contextlib import suppress
-
-# Third-party imports
 import asyncio
-from wizwalker import HookNotActive
 
 # Custom imports
 from .pixels import DeviceContext, match_image
@@ -152,12 +149,8 @@ class Battle(DeviceContext):
         while not self._is_turn() and not self.is_idle():
             await asyncio.sleep(1)
 
-        if not await self.client.walker.move_lock():
+        if not await self.client.walker.in_battle():
             self.log("Battle has finished")
-
-            with suppress(HookNotActive):
-                await self.client.get_mana()
-                await self.client.get_health()
 
             await asyncio.sleep(0.5)
             self.is_over = True

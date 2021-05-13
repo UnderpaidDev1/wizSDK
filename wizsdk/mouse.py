@@ -116,7 +116,7 @@ class Mouse(Window):
             ctypes.windll.user32.ClientToScreen(self.window_handle, ctypes.byref(point))
             self.silent_xpos = point.x
             self.silent_ypos = point.y
-            await self.walker.set_mouse_position(
+            await self.walker.mouse_handler.set_mouse_position(
                 self.silent_xpos, self.silent_ypos, convert_from_client=False
             )
             self.silent_init = True
@@ -135,7 +135,7 @@ class Mouse(Window):
             await self.init_silent_mode()
             self.silent_xpos = x
             self.silent_ypos = y
-            await self.walker.set_mouse_position(
+            await self.walker.mouse_handler.set_mouse_position(
                 self.silent_xpos, self.silent_ypos, convert_from_client=False
             )
 
@@ -192,7 +192,7 @@ class Mouse(Window):
         if not self.silent_mode and not (_x, _y) not in FAILSAFE_POINTS:
             self.failSafeCheck()
 
-    def wizsdk_client_coords_to_wizwalker(self, x: int, y: int) -> (int, int):
+    def wizsdk_client_coords_to_wizwalker(self, x: int, y: int) -> tuple:
         """
         Converts WizSDK client coords to wizwalker client coords
         """
@@ -240,7 +240,7 @@ class Mouse(Window):
             (nx, ny) = self.wizsdk_client_coords_to_wizwalker(
                 x, y
             )  # this is needed because walker.click implicitly converts client to screen, but with a different method
-            await self.walker.click(
+            await self.walker.mouse_handler.click(
                 nx, ny, right_click=button != "left", sleep_duration=delay
             )
 
